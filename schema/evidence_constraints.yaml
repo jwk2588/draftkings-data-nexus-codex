@@ -1,0 +1,211 @@
+# ============================================================
+# DraftKings Graph — Evidence Constraints & Integrity Rules
+# STATUS: FROZEN — changes require ADR amendment
+# Last frozen: 2026-05-19
+# Authority: MBv54 Legal Spine / Canonical Evidence Layer
+# ============================================================
+#
+# This file defines:
+#   1. SHA-256 content hashing requirements
+#   2. GraphMutationEvent immutable log specification
+#   3. Tier enforcement middleware contract
+#   4. Duplicate detection rules
+#   5. Dual symbolic/enterprise taxonomy mapping
+# ============================================================
+
+version: "1.0.0"
+frozen: true
+authority: "MBv54-Legal-Spine"
+
+# ----------------------------------------------------------
+# 1. SHA-256 Evidence Hashing
+# ----------------------------------------------------------
+# Every Evidence node MUST store a SHA-256 hash of its content.
+# This enables: duplicate detection, integrity verification,
+# provenance chain-of-custody, and litigation-grade auditability.
+
+evidence_hashing:
+  algorithm: "sha256"
+  field_name: "content_hash"
+  required_on:
+    - Evidence
+    - SourceDocument
+    - GraphMutationEvent
+  hash_input_fields:
+    Evidence:
+      - evidence_text
+      - source_doc
+      - extracted_by
+      - extracted_at
+    SourceDocument:
+      - doc_id
+      - doc_type
+      - source_system
+      - ingested_at
+  hash_format: "hex string, lowercase, 64 characters"
+  collision_policy: "REJECT ingestion if content_hash already exists in graph"
+  integrity_check_interval: "on every read in reasoning layer"
+  python_implementation: |
+    import hashlib, json
+    def compute_evidence_hash(fields: dict) -> str:
+        canonical = json.dumps(fields, sort_keys=True, ensure_ascii=True)
+        return hashlib.sha256(canonical.encode('utf-8')).hexdigest()
+
+# ----------------------------------------------------------
+# 2. GraphMutationEvent — Immutable Append-Only Event Log
+# ----------------------------------------------------------
+# Every write, update, or deprecation to the graph MUST
+# produce a GraphMutationEvent node BEFORE the mutation occurs.
+# This is the chain-of-custody for the entire knowledge graph.
+#
+# RULE: Never silently mutate Evidence nodes.
+# RULE: Every mutation is a new event — never overwrite events.
+
+graph_mutation_event:
+  node_label: "GraphMutationEvent"
+  immutable: true
+  append_only: true
+  required_fields:
+    - event_id          # UUID v4
+    - event_type        # CREATE | UPDATE | DEPRECATE | PROMOTE | REJECT
+    - target_node_id    # ID of the node being mutated
+    - target_node_label # Label of the node being mutated
+    - actor             # Agent ID or "human_curator"
+    - actor_tier        # T1 | T2 | T3 write authority
+    - payload_hash      # SHA-256 of the mutation payload
+    - previous_hash     # SHA-256 of the previous state (null for CREATE)
+    - timestamp         # ISO-8601 UTC
+    - session_id        # Orchestration session that triggered this
+  optional_fields:
+    - reasoning_trace   # Claude's chain-of-thought for T2 mutations
+    - rollback_ref      # Event ID to roll back to
+    - adr_ref           # ADR that authorized this mutation type
+  event_types:
+    CREATE:
+      description: "New node written to graph for the first time"
+      requires_schema_validation: true
+      requires_tier_check: true
+    UPDATE:
+      description: "Mutable node fields updated (T2/T3 only)"
+      forbidden_on: ["Evidence", "SourceDocument", "GraphMutationEvent"]
+      requires_diff: true
+    DEPRECATE:
+      description: "Node marked deprecated — never deleted"
+      sets_field: "deprecated: true, deprecated_at: <timestamp>"
+    PROMOTE:
+      description: "Node promoted to higher tier (T3→T2 or T2→T1)"
+      requires_approval_for: ["T2→T1"]
+    REJECT:
+      description: "Attempted write rejected by tier enforcement middleware"
+      logged_always: true
+  cypher_template: |
+    CREATE (:GraphMutationEvent {
+      event_id: $event_id,
+      event_type: $event_type,
+      target_node_id: $target_node_id,
+      target_node_label: $target_node_label,
+      actor: $actor,
+      actor_tier: $actor_tier,
+      payload_hash: $payload_hash,
+      previous_hash: $previous_hash,
+      timestamp: $timestamp,
+      session_id: $session_id
+    })
+
+# ----------------------------------------------------------
+# 3. Tier Enforcement Middleware Contract
+# ----------------------------------------------------------
+# The middleware MUST run these three checks in order
+# before ANY write to the graph. All three must pass.
+
+tier_enforcement_middleware:
+  execution_order:
+    1: validate_tier_permissions
+    2: validate_node_schema
+    3: validate_evidence_constraints
+
+  validate_tier_permissions:
+    description: "Check that the writing agent has authority for the target tier"
+    rules:
+      - "T1 writes: only gemini_extractor, chatgpt_etl, human_curator"
+      - "T2 writes: only claude_reasoning_layer, gemini_extractor, algo_code_writer"
+      - "T3 writes: any registered agent"
+      - "GraphMutationEvent writes: only tier_enforcement_middleware itself"
+    on_failure: "REJECT — log GraphMutationEvent with type=REJECT"
+
+  validate_node_schema:
+    description: "Validate all required fields are present and correctly typed"
+    rules:
+      - "All required fields from node_types.yaml must be present"
+      - "Field types must match declared types"
+      - "Enum fields must use only declared values"
+      - "content_hash must be present and 64-char hex"
+    on_failure: "REJECT — return validation error with field-level detail"
+
+  validate_evidence_constraints:
+    description: "Check evidence-specific integrity rules"
+    rules:
+      - "content_hash must be unique (no duplicates)"
+      - "T1 Evidence must have exactly one CITES relationship"
+      - "T2 Theory must have at least one DERIVED_FROM relationship"
+      - "Relationship types must match allowed_from/allowed_to in relationship_types.yaml"
+      - "No circular SUPPORTS chains"
+    on_failure: "REJECT — log collision or constraint violation"
+
+# ----------------------------------------------------------
+# 4. Duplicate Detection
+# ----------------------------------------------------------
+
+duplicate_detection:
+  primary_method: "content_hash exact match"
+  secondary_method: "Qdrant cosine similarity >= 0.92"
+  action_on_exact_duplicate: "REJECT with event_type=REJECT"
+  action_on_semantic_duplicate:
+    threshold: 0.92
+    action: "FLAG for human review — do not auto-reject"
+    log_as: "POTENTIAL_DUPLICATE"
+
+# ----------------------------------------------------------
+# 5. Dual Symbolic / Enterprise Taxonomy
+# ----------------------------------------------------------
+# Internal symbolic names map to clean enterprise schema names.
+# Both layers are maintained. Symbolic names are for internal
+# cognition; enterprise names are for external stakeholders.
+
+taxonomy:
+  description: >
+    Maintain both layers. Symbolic names power internal reasoning.
+    Enterprise names are used in all external-facing outputs,
+    API responses, audit reports, and regulatory documents.
+
+  mappings:
+    - symbolic: "Engine 3"
+      enterprise: "Revenue Recognition Cluster"
+      domain: "financial"
+    - symbolic: "Levee 7"
+      enterprise: "Cross-Platform Liability Boundary"
+      domain: "legal"
+    - symbolic: "Crown"
+      enterprise: "Monetary Exposure Aggregate"
+      domain: "financial"
+    - symbolic: "Nexus"
+      enterprise: "Master Knowledge Graph Integration Layer"
+      domain: "technical"
+    - symbolic: "Centipede"
+      enterprise: "Multi-Node Agent Orchestration Chain"
+      domain: "technical"
+    - symbolic: "Detonator Board"
+      enterprise: "High-Impact Decision Trigger Matrix"
+      domain: "strategic"
+    - symbolic: "MBv54 Legal Spine"
+      enterprise: "Canonical Evidence Governance Framework v54"
+      domain: "legal"
+    - symbolic: "Data Nexus Codex"
+      enterprise: "DraftKings Master Knowledge Repository"
+      domain: "technical"
+
+  rendering_rules:
+    internal_agents: "use symbolic names"
+    api_responses: "use enterprise names"
+    audit_reports: "use enterprise names with symbolic in parentheses"
+    graph_nodes: "store both — symbolic_name and enterprise_name fields"

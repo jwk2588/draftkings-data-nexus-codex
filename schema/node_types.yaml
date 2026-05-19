@@ -1,0 +1,208 @@
+# ============================================================
+# DraftKings Graph — Canonical Node Type Registry
+# STATUS: FROZEN — changes require ADR amendment
+# Last frozen: 2026-05-19
+# Authority: MBv54 Legal Spine / Canonical Evidence Layer
+# ============================================================
+#
+# RULE: No node may be written to the graph unless its type
+# is declared here with all required fields present.
+# Violation = ingestion rejection at the ETL boundary.
+# ============================================================
+
+version: "1.0.0"
+frozen: true
+authority: "MBv54-Legal-Spine"
+
+nodes:
+
+  # ----------------------------------------------------------
+  # TIER 1 — Primary Evidence Nodes
+  # These are the atomic, immutable facts of the graph.
+  # Once written, they may not be deleted — only deprecated.
+  # ----------------------------------------------------------
+
+  Evidence:
+    description: "An atomic, sourced fact extracted from a document or conversation."
+    tier: 1
+    immutable: true
+    required:
+      - ev_id          # UUID v4, globally unique
+      - tier           # 1 = primary, 2 = derived, 3 = inferred
+      - source_doc     # Origin document identifier
+      - evidence_text  # Raw extracted text (max 2000 chars)
+      - extracted_by   # Model that extracted: gemini|chatgpt|claude
+      - extracted_at   # ISO-8601 timestamp
+    optional:
+      - confidence     # Float 0.0–1.0
+      - page_ref       # Page or section reference in source
+      - embedding_id   # Foreign key to Qdrant vector store
+    constraints:
+      - "ev_id MUST be unique across all Evidence nodes"
+      - "tier MUST be 1, 2, or 3"
+      - "evidence_text MUST NOT be empty"
+      - "extracted_by MUST be one of: gemini, chatgpt, claude, human"
+
+  # ----------------------------------------------------------
+  # TIER 2 — Derived / Analytical Nodes
+  # Produced by reasoning over Tier 1 evidence.
+  # Must cite at least one Evidence node as source.
+  # ----------------------------------------------------------
+
+  Theory:
+    description: "A hypothesis or analytical conclusion derived from one or more Evidence nodes."
+    tier: 2
+    immutable: false
+    required:
+      - theory_id
+      - theory_text
+      - derived_by     # Agent or model that produced this
+      - derived_at
+      - confidence
+    optional:
+      - status         # proposed|validated|refuted|deprecated
+      - domain         # e.g. player_value, ownership, stacking
+    constraints:
+      - "MUST have at least one SUPPORTS relationship from an Evidence node"
+      - "confidence MUST be between 0.0 and 1.0"
+
+  Claim:
+    description: "A specific, testable assertion about a DraftKings entity."
+    tier: 2
+    immutable: false
+    required:
+      - claim_id
+      - claim_text
+      - subject_type   # Player|Contest|Team|Slate
+      - subject_id
+      - derived_at
+    optional:
+      - verified       # Boolean
+      - verified_by
+      - verified_at
+    constraints:
+      - "subject_type MUST be one of: Player, Contest, Team, Slate, Market"
+
+  # ----------------------------------------------------------
+  # TIER 3 — DraftKings Domain Nodes
+  # Core DFS entities extracted from the DraftKings platform.
+  # ----------------------------------------------------------
+
+  Player:
+    description: "A DraftKings player with salary and projection data."
+    tier: 3
+    immutable: false
+    required:
+      - player_id      # DK internal player ID
+      - name
+      - position       # QB|RB|WR|TE|FLEX|DST|etc.
+      - team
+      - salary
+      - sport
+    optional:
+      - avg_points
+      - projected_points
+      - ownership_projection
+      - injury_status  # Active|Questionable|Out|IR
+      - slate_id
+    constraints:
+      - "position MUST match sport-specific allowed positions"
+      - "salary MUST be a positive integer"
+
+  Contest:
+    description: "A DraftKings contest (tournament, cash game, etc.)."
+    tier: 3
+    immutable: false
+    required:
+      - contest_id
+      - name
+      - sport
+      - entry_fee
+      - total_prizes
+      - contest_type   # GPP|Cash|H2H|Satellite
+      - starts_at
+    optional:
+      - max_entries
+      - current_entries
+      - salary_cap
+    constraints:
+      - "contest_type MUST be one of: GPP, Cash, H2H, Satellite, Qualifier"
+      - "entry_fee MUST be >= 0"
+
+  Team:
+    description: "An NFL/NBA/MLB/etc. team entity."
+    tier: 3
+    immutable: false
+    required:
+      - team_id
+      - abbreviation
+      - full_name
+      - sport
+    optional:
+      - division
+      - conference
+      - implied_team_total
+      - spread
+
+  Slate:
+    description: "A DraftKings contest slate (set of games for a given date/sport)."
+    tier: 3
+    immutable: false
+    required:
+      - slate_id
+      - sport
+      - slate_date
+      - slate_type     # Main|Afternoon|Primetime|Showdown
+    optional:
+      - game_count
+      - lock_time
+
+  Market:
+    description: "A sportsbook market or betting line associated with a game."
+    tier: 3
+    immutable: false
+    required:
+      - market_id
+      - game
+      - market_type    # Spread|Total|Moneyline|PlayerProp
+      - line
+      - source         # DK|FanDuel|BetMGM|etc.
+    optional:
+      - implied_total
+      - movement_direction  # up|down|flat
+
+  # ----------------------------------------------------------
+  # TIER 4 — Metadata / Orchestration Nodes
+  # Track provenance, jobs, and agent activity.
+  # ----------------------------------------------------------
+
+  SourceDocument:
+    description: "A source document from which Evidence was extracted."
+    tier: 4
+    immutable: true
+    required:
+      - doc_id
+      - doc_type       # conversation|pdf|csv|api_response|web_page
+      - source_system  # chatgpt_export|dk_api|web_scrape|manual
+      - ingested_at
+    optional:
+      - title
+      - url
+      - file_path
+      - checksum
+
+  AgentActivity:
+    description: "A record of an agent or subagent action within the platform."
+    tier: 4
+    immutable: true
+    required:
+      - activity_id
+      - agent_id
+      - action_type    # extract|classify|ingest|reason|retrieve
+      - started_at
+      - status         # running|success|failed
+    optional:
+      - completed_at
+      - input_ref
+      - output_ref
+      - error_message

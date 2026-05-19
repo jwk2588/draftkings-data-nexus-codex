@@ -1,0 +1,41 @@
+2026-05-19 09:33:29,459 [ETL] INFO =======================================================
+2026-05-19 09:33:29,459 [ETL] INFO STEP 1 — Normalize ChatGPT Export
+2026-05-19 09:33:29,459 [ETL] INFO =======================================================
+2026-05-19 09:33:29,926 [ETL] INFO No conversations.json provided — using synthetic sample
+2026-05-19 09:33:29,927 [ETL] INFO Loading /tmp/sample_conversations.json ...
+2026-05-19 09:33:29,930 [ETL] INFO Normalized 6 records from 3 conversations
+2026-05-19 09:33:29,933 [ETL] INFO Wrote normalized Parquet → /home/ubuntu/draftkings-data-nexus-codex/artifacts/parquet/normalized.parquet
+2026-05-19 09:33:29,933 [ETL] INFO Normalized: 6 records → /home/ubuntu/draftkings-data-nexus-codex/artifacts/parquet/normalized.parquet
+2026-05-19 09:33:29,933 [ETL] INFO =======================================================
+2026-05-19 09:33:29,933 [ETL] INFO STEP 2 — DK Relevance Classification
+2026-05-19 09:33:29,933 [ETL] INFO =======================================================
+2026-05-19 09:33:29,937 [ETL] INFO Classifying 6 records ...
+2026-05-19 09:33:29,942 [ETL] INFO DK-relevant records: 4 / 6 (66.7%)
+2026-05-19 09:33:29,944 [ETL] INFO Wrote classified Parquet → /home/ubuntu/draftkings-data-nexus-codex/artifacts/parquet/classified.parquet
+2026-05-19 09:33:29,945 [ETL] INFO Classified: 4 DK-relevant / 6 total
+2026-05-19 09:33:29,945 [ETL] INFO =======================================================
+2026-05-19 09:33:29,945 [ETL] INFO STEP 3 — Entity Extraction
+2026-05-19 09:33:29,945 [ETL] INFO =======================================================
+2026-05-19 09:33:29,949 [ETL] INFO Extracting entities from 4 DK-relevant records ...
+2026-05-19 09:33:29,952 [ETL] INFO Extracted: 4 evidence nodes, 1 players, 1 teams, 1 markets
+2026-05-19 09:33:29,954 [ETL] INFO Wrote evidence → /home/ubuntu/draftkings-data-nexus-codex/artifacts/parquet/evidence.parquet
+2026-05-19 09:33:29,955 [ETL] INFO Wrote players → /home/ubuntu/draftkings-data-nexus-codex/artifacts/parquet/players.parquet
+2026-05-19 09:33:29,956 [ETL] INFO Wrote teams → /home/ubuntu/draftkings-data-nexus-codex/artifacts/parquet/teams.parquet
+2026-05-19 09:33:29,957 [ETL] INFO Wrote markets → /home/ubuntu/draftkings-data-nexus-codex/artifacts/parquet/markets.parquet
+2026-05-19 09:33:29,958 [ETL] INFO Extracted: 4 evidence, 1 players, 1 teams, 1 markets
+2026-05-19 09:33:29,958 [ETL] INFO =======================================================
+2026-05-19 09:33:29,958 [ETL] INFO STEP 4 — Neo4j Graph Ingest
+2026-05-19 09:33:29,958 [ETL] INFO =======================================================
+2026-05-19 09:33:32,418 [ETL] WARNING Neo4j not available: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 111] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 111] Connection refused) — running in DRY RUN mode
+2026-05-19 09:33:32,419 [ETL] WARNING DRY RUN MODE — Neo4j unavailable. All writes logged to mutation_log.jsonl only.
+2026-05-19 09:33:32,422 [ETL] INFO Evidence: 4 written, 0 rejected
+2026-05-19 09:33:32,423 [ETL] INFO Players: 1 written, 0 rejected
+2026-05-19 09:33:32,424 [ETL] INFO Teams: 1 written, 0 rejected
+2026-05-19 09:33:32,425 [ETL] INFO Ingest complete: {"Evidence": {"written": 4, "rejected": 0}, "Player": {"written": 1, "rejected": 0}, "Team": {"written": 1, "rejected": 0}, "mutation_events": 6, "rejected_events": 0, "dry_run": true}
+2026-05-19 09:33:32,425 [ETL] INFO Neo4j ingest: {"Evidence": {"written": 4, "rejected": 0}, "Player": {"written": 1, "rejected": 0}, "Team": {"written": 1, "rejected": 0}, "mutation_events": 6, "rejected_events": 0, "dry_run": true}
+2026-05-19 09:33:32,425 [ETL] INFO =======================================================
+2026-05-19 09:33:32,425 [ETL] INFO PIPELINE COMPLETE — 4 steps, 0 errors
+2026-05-19 09:33:32,425 [ETL] INFO Report: /home/ubuntu/draftkings-data-nexus-codex/artifacts/pipeline_report.json
+2026-05-19 09:33:32,425 [ETL] INFO =======================================================

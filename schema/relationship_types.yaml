@@ -1,0 +1,214 @@
+# ============================================================
+# DraftKings Graph — Canonical Relationship Type Registry
+# STATUS: FROZEN — changes require ADR amendment
+# Last frozen: 2026-05-19
+# Authority: MBv54 Legal Spine / Canonical Evidence Layer
+# ============================================================
+#
+# RULE: No relationship may be written to the graph unless
+# its type is declared here with allowed source/target types.
+# Violation = ingestion rejection at the ETL boundary.
+# ============================================================
+
+version: "1.0.0"
+frozen: true
+authority: "MBv54-Legal-Spine"
+
+relationships:
+
+  # ----------------------------------------------------------
+  # Evidence Chain Relationships
+  # The backbone of the Canonical Evidence Layer.
+  # ----------------------------------------------------------
+
+  SUPPORTS:
+    description: "An Evidence node supports (corroborates) a Theory or Claim."
+    allowed_from:
+      - Evidence
+    allowed_to:
+      - Theory
+      - Claim
+    required_properties:
+      - support_type   # direct|indirect|circumstantial
+      - confidence     # Float 0.0–1.0
+    optional_properties:
+      - reasoning      # Short explanation of why this supports
+    constraints:
+      - "confidence MUST be between 0.0 and 1.0"
+      - "A single Evidence node may SUPPORT multiple Theories"
+
+  CONTRADICTS:
+    description: "An Evidence node contradicts a Theory or Claim."
+    allowed_from:
+      - Evidence
+    allowed_to:
+      - Theory
+      - Claim
+    required_properties:
+      - confidence
+    optional_properties:
+      - reasoning
+    constraints:
+      - "CONTRADICTS and SUPPORTS cannot coexist between the same pair"
+
+  DERIVED_FROM:
+    description: "A Theory or Claim was derived from one or more Evidence nodes."
+    allowed_from:
+      - Theory
+      - Claim
+    allowed_to:
+      - Evidence
+    required_properties:
+      - derived_by     # Agent ID
+      - derived_at
+    optional_properties: []
+    constraints:
+      - "Every Theory MUST have at least one DERIVED_FROM edge"
+
+  CITES:
+    description: "An Evidence node cites its source document."
+    allowed_from:
+      - Evidence
+    allowed_to:
+      - SourceDocument
+    required_properties:
+      - cited_at
+    optional_properties:
+      - page_ref
+    constraints:
+      - "Every Evidence node MUST have exactly one CITES edge"
+
+  # ----------------------------------------------------------
+  # DraftKings Domain Relationships
+  # ----------------------------------------------------------
+
+  PLAYS_FOR:
+    description: "A Player plays for a Team."
+    allowed_from:
+      - Player
+    allowed_to:
+      - Team
+    required_properties:
+      - season
+    optional_properties:
+      - start_date
+      - end_date
+    constraints:
+      - "A Player may PLAYS_FOR only one active Team per sport per season"
+
+  COMPETES_IN:
+    description: "A Player competes in a Contest (is slated)."
+    allowed_from:
+      - Player
+    allowed_to:
+      - Contest
+    required_properties:
+      - salary
+      - slate_id
+    optional_properties:
+      - projected_points
+      - ownership_projection
+    constraints:
+      - "salary MUST match the Player node salary for the same slate"
+
+  PART_OF_SLATE:
+    description: "A Contest belongs to a Slate."
+    allowed_from:
+      - Contest
+    allowed_to:
+      - Slate
+    required_properties:
+      - added_at
+    optional_properties: []
+    constraints: []
+
+  HAS_MARKET:
+    description: "A Team or Slate has an associated betting Market."
+    allowed_from:
+      - Team
+      - Slate
+    allowed_to:
+      - Market
+    required_properties:
+      - market_date
+    optional_properties:
+      - source
+    constraints: []
+
+  OPPOSES:
+    description: "A Team opposes another Team in a game."
+    allowed_from:
+      - Team
+    allowed_to:
+      - Team
+    required_properties:
+      - game_date
+      - slate_id
+    optional_properties:
+      - home_away      # home|away
+    constraints:
+      - "OPPOSES is bidirectional — both directions must be written"
+
+  # ----------------------------------------------------------
+  # Analytical Relationships
+  # ----------------------------------------------------------
+
+  CORRELATES_WITH:
+    description: "A Player's performance correlates with another Player (e.g. QB-WR stack)."
+    allowed_from:
+      - Player
+    allowed_to:
+      - Player
+    required_properties:
+      - correlation_score   # Float -1.0 to 1.0
+      - stack_type          # QB_WR|RB_DEF|TE_QB|etc.
+    optional_properties:
+      - historical_sample_size
+    constraints:
+      - "correlation_score MUST be between -1.0 and 1.0"
+
+  CLAIMS_ABOUT:
+    description: "A Claim is about a specific DraftKings entity."
+    allowed_from:
+      - Claim
+    allowed_to:
+      - Player
+      - Contest
+      - Team
+      - Slate
+      - Market
+    required_properties:
+      - claim_type     # value|ownership|injury|weather|stack
+    optional_properties: []
+    constraints: []
+
+  # ----------------------------------------------------------
+  # Provenance Relationships
+  # ----------------------------------------------------------
+
+  PRODUCED_BY:
+    description: "A node was produced by an AgentActivity."
+    allowed_from:
+      - Evidence
+      - Theory
+      - Claim
+    allowed_to:
+      - AgentActivity
+    required_properties:
+      - produced_at
+    optional_properties: []
+    constraints: []
+
+  EXTRACTED_FROM:
+    description: "An Evidence node was extracted from a SourceDocument."
+    allowed_from:
+      - Evidence
+    allowed_to:
+      - SourceDocument
+    required_properties:
+      - extraction_method  # gemini_multimodal|chatgpt_etl|claude_reasoning|regex
+      - extracted_at
+    optional_properties:
+      - chunk_index
+    constraints:
+      - "extraction_method MUST be one of: gemini_multimodal, chatgpt_etl, claude_reasoning, regex, human"

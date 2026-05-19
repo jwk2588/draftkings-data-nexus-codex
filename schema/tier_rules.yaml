@@ -1,0 +1,141 @@
+# ============================================================
+# DraftKings Graph — Tier Governance Rules
+# STATUS: FROZEN — changes require ADR amendment
+# Last frozen: 2026-05-19
+# Authority: MBv54 Legal Spine
+# ============================================================
+#
+# These rules govern how evidence is classified, promoted,
+# and constrained across the three evidence tiers.
+# The Claude Reasoning Layer MUST enforce these rules before
+# writing any node or relationship to the graph.
+# ============================================================
+
+version: "1.0.0"
+frozen: true
+authority: "MBv54-Legal-Spine"
+
+# ----------------------------------------------------------
+# Tier Definitions
+# ----------------------------------------------------------
+
+tiers:
+
+  T1:
+    name: "Primary Evidence"
+    description: >
+      Directly sourced, unmodified facts from authoritative documents.
+      These are the atomic units of truth in the graph.
+      T1 nodes are immutable once written.
+    sources_allowed:
+      - DraftKings API responses
+      - Official DraftKings contest pages
+      - Verified sportsbook odds feeds
+      - Raw ChatGPT export conversations (pre-classification)
+      - Human-authored documents with explicit sourcing
+    mutation_policy: "IMMUTABLE — append-only. Deprecation allowed, deletion forbidden."
+    confidence_floor: 0.80
+    required_citation: true
+    write_authority:
+      - gemini_extractor
+      - chatgpt_etl
+      - human_curator
+
+  T2:
+    name: "Derived / Analytical Evidence"
+    description: >
+      Conclusions, hypotheses, and analytical outputs derived by
+      reasoning over T1 evidence. Must cite at least one T1 node.
+      Subject to revision as new T1 evidence arrives.
+    sources_allowed:
+      - Claude Reasoning Layer outputs
+      - Gemini synthesis outputs
+      - Algorithmic analysis results
+      - GraphRAG retrieval-augmented conclusions
+    mutation_policy: "MUTABLE — may be updated or deprecated. Full audit trail required."
+    confidence_floor: 0.60
+    required_citation: true
+    min_t1_citations: 1
+    write_authority:
+      - claude_reasoning_layer
+      - gemini_extractor
+      - algo_code_writer
+
+  T3:
+    name: "Inferred / Speculative Evidence"
+    description: >
+      Low-confidence inferences, speculative hypotheses, or
+      model-generated content with insufficient T1 backing.
+      Must be clearly labeled. Never used as sole basis for decisions.
+    sources_allowed:
+      - LLM speculative outputs
+      - Pattern extrapolation
+      - Ownership projection models
+    mutation_policy: "MUTABLE — high churn expected. Automatic expiry after 72 hours unless promoted."
+    confidence_floor: 0.0
+    confidence_ceiling: 0.59
+    required_citation: false
+    auto_expiry_hours: 72
+    write_authority:
+      - any_agent
+
+# ----------------------------------------------------------
+# Promotion Rules
+# ----------------------------------------------------------
+
+promotion_rules:
+
+  T3_to_T2:
+    trigger: "Confidence score rises above 0.60 AND at least one T1 citation added"
+    action: "Re-classify node as T2. Log promotion event."
+    requires_approval: false
+
+  T2_to_T1:
+    trigger: "Node verified by human curator OR confirmed by 3+ independent T1 sources"
+    action: "Re-classify node as T1. Mark immutable."
+    requires_approval: true
+    approver: "human_curator"
+
+# ----------------------------------------------------------
+# Pollution Prevention Rules
+# ----------------------------------------------------------
+
+pollution_prevention:
+
+  duplicate_detection:
+    strategy: "Semantic similarity via Qdrant cosine distance"
+    threshold: 0.92
+    action: "Reject ingestion if duplicate detected. Log collision."
+
+  semantic_drift_guard:
+    description: >
+      Claude and Gemini must not silently rephrase or reinterpret
+      T1 evidence when writing T2 nodes. All T2 nodes must include
+      a verbatim_quote field referencing the original T1 text.
+    enforcement: "ETL boundary validation before Neo4j write"
+
+  node_inflation_limit:
+    max_t3_nodes_per_slate: 500
+    action_on_exceed: "Purge lowest-confidence T3 nodes until under limit"
+
+  relationship_pollution:
+    forbidden_patterns:
+      - "Evidence SUPPORTS Evidence (circular)"
+      - "Theory SUPPORTS Theory without T1 backing"
+      - "Player CORRELATES_WITH Player with |score| < 0.15 (noise)"
+
+# ----------------------------------------------------------
+# Claude Reasoning Layer Constraints
+# ----------------------------------------------------------
+
+claude_constraints:
+  description: >
+    Rules the Claude Reasoning Layer must follow when reading
+    from and writing to the graph.
+  rules:
+    - "MUST cite tier of every node referenced in reasoning chain"
+    - "MUST NOT promote T3 to T2 without explicit confidence calculation"
+    - "MUST flag any T1 node that appears to conflict with another T1 node"
+    - "MUST include reasoning_trace in every T2 node it writes"
+    - "MUST NOT write to graph during rate-limited or degraded API state"
+    - "MUST use Cypher parameterized queries only — no string interpolation"

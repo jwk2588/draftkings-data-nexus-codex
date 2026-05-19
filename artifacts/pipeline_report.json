@@ -1,0 +1,46 @@
+{
+  "steps": [
+    {
+      "step": "normalize",
+      "records": 6,
+      "status": "ok"
+    },
+    {
+      "step": "classify",
+      "total_records": 6,
+      "dk_relevant": 4,
+      "relevance_rate": "66.7%",
+      "status": "ok"
+    },
+    {
+      "step": "extract_entities",
+      "evidence_nodes": 4,
+      "players": 1,
+      "teams": 1,
+      "markets": 1,
+      "status": "ok"
+    },
+    {
+      "step": "neo4j_ingest",
+      "Evidence": {
+        "written": 4,
+        "rejected": 0
+      },
+      "Player": {
+        "written": 1,
+        "rejected": 0
+      },
+      "Team": {
+        "written": 1,
+        "rejected": 0
+      },
+      "mutation_events": 6,
+      "rejected_events": 0,
+      "dry_run": true,
+      "status": "ok"
+    }
+  ],
+  "errors": [],
+  "success": true,
+  "steps_completed": 4
+}
