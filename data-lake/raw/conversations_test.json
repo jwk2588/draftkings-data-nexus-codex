@@ -1,0 +1,82 @@
+[
+  {
+    "id": "thread-001",
+    "title": "DraftKings ASC 606 Calendar Bleed Analysis",
+    "create_time": 1700000000,
+    "default_model_slug": "gpt-4",
+    "mapping": {
+      "msg-001": {
+        "message": {
+          "id": "msg-001",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1700000001,
+          "content": {
+            "parts": [
+              "Let's analyze the DraftKings ASC 606 calendar bleed exposure. EV-010 through EV-013 are the core evidence items. Levee 2 is the ASC 606 recognition boundary. Engine 3 handles this."
+            ]
+          }
+        }
+      },
+      "msg-002": {
+        "message": {
+          "id": "msg-002",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1700000002,
+          "content": {
+            "parts": [
+              "The calendar bleed issue under ASC 606 is critical for DraftKings. SB-20 through SB-22 document the revenue recognition cluster. The Detonator Board would activate if Levee 2 and Levee 3 are both breached."
+            ]
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "thread-002",
+    "title": "Michigan MGCB Regulatory Analysis",
+    "create_time": 1700001000,
+    "default_model_slug": "gpt-4",
+    "mapping": {
+      "msg-003": {
+        "message": {
+          "id": "msg-003",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1700001001,
+          "content": {
+            "parts": [
+              "What is the Michigan MGCB exposure for DraftKings? EV-001 is the core evidence. Pillar 1 covers this domain. MBv54 section 3.2 is the controlling text."
+            ]
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "thread-003",
+    "title": "General Python coding question",
+    "create_time": 1700002000,
+    "default_model_slug": "gpt-4",
+    "mapping": {
+      "msg-004": {
+        "message": {
+          "id": "msg-004",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1700002001,
+          "content": {
+            "parts": [
+              "How do I sort a list in Python?"
+            ]
+          }
+        }
+      }
+    }
+  }
+]

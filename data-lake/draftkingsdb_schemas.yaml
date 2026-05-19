@@ -1,0 +1,231 @@
+# ============================================================
+# DraftKingsDB Logical Schemas
+# ============================================================
+# Manus Directive v1.0, Section 4.2
+# All schemas preserve original IDs from MBv54 (EV-xxx, SB-xx)
+# and attach NEXUS node IDs and Tier metadata.
+# ============================================================
+
+version: "1.0.0"
+authority: "Manus Directive v1.0 / MBv54 Legal Spine"
+
+schemas:
+
+  # ----------------------------------------------------------
+  # legal_documents
+  # ----------------------------------------------------------
+  legal_documents:
+    description: "MBv54 sections, Authority MasterBrief nodes, ToS/Privacy variants"
+    tier: "T1"
+    fields:
+      - name: doc_id
+        type: string
+        required: true
+        description: "Unique document identifier (e.g., MBv54-SEC-3.2)"
+      - name: nexus_node_id
+        type: string
+        required: true
+        description: "NEXUS node ID (e.g., NEXUS-001)"
+      - name: tier
+        type: string
+        enum: [T1, T2, T3]
+        required: true
+      - name: source_file
+        type: string
+        required: true
+        description: "Original file name (e.g., MasterBrief_v54_CONSOLIDATED-2.docx)"
+      - name: section_ref
+        type: string
+        description: "Section reference within the document"
+      - name: dk_domain
+        type: string
+        description: "DK domain (michigan_core, asc_606, cftc, etc.)"
+      - name: title
+        type: string
+        required: true
+      - name: text_extract
+        type: string
+        description: "Extracted text content"
+      - name: content_hash
+        type: string
+        required: true
+        description: "SHA-256 of text_extract"
+      - name: deployment_status
+        type: string
+        enum: [main, appendix, quarantine]
+        required: true
+      - name: created_at
+        type: datetime
+      - name: symbolic_name
+        type: string
+        description: "Internal symbolic name (e.g., Engine 3)"
+      - name: enterprise_name
+        type: string
+        description: "Enterprise-facing name (e.g., Revenue Recognition Cluster)"
+
+  # ----------------------------------------------------------
+  # evidence_items
+  # ----------------------------------------------------------
+  evidence_items:
+    description: "EV-IDs, SB-IDs, cluster tags, source files — frozen ID space"
+    tier: "T1"
+    frozen_id_ranges:
+      ev_ids: "EV-001 through EV-291"
+      sb_ids: "SB-01 through SB-66"
+    fields:
+      - name: ev_id
+        type: string
+        pattern: "^EV-\\d{3}$"
+        required: true
+        description: "Evidence ID — frozen range EV-001–EV-291"
+      - name: sb_id
+        type: string
+        pattern: "^SB-\\d{2}$"
+        description: "Silver Bullet ID — frozen range SB-01–SB-66"
+      - name: nexus_node_id
+        type: string
+        required: true
+      - name: tier
+        type: string
+        enum: [T1, T2, T3]
+        required: true
+      - name: source_doc
+        type: string
+        required: true
+        description: "Primary source document"
+      - name: evidence_text
+        type: string
+        required: true
+        description: "The actual evidence text"
+      - name: content_hash
+        type: string
+        required: true
+        description: "SHA-256 of evidence_text"
+      - name: cluster_tags
+        type: list[string]
+        description: "Domain cluster tags (michigan_core, asc_606, etc.)"
+      - name: pillar_ids
+        type: list[string]
+        description: "Associated Pillar IDs"
+      - name: levee_ids
+        type: list[string]
+        description: "Associated Levee IDs"
+      - name: engine_ids
+        type: list[string]
+        description: "Associated Engine IDs"
+      - name: deployment_status
+        type: string
+        enum: [main, appendix, quarantine]
+        required: true
+      - name: created_at
+        type: datetime
+
+  # ----------------------------------------------------------
+  # conversations
+  # ----------------------------------------------------------
+  conversations:
+    description: "ChatGPT exports, internal ADR sessions, DK support threads"
+    tier: "T2"
+    fields:
+      - name: thread_id
+        type: string
+        required: true
+      - name: message_id
+        type: string
+        required: true
+      - name: nexus_node_id
+        type: string
+        required: true
+        description: "NEXUS-021 (DK_CORE), NEXUS-022 (DK_ADJACENT), NEXUS-023 (NON_DK)"
+      - name: tier
+        type: string
+        enum: [T1, T2, T3]
+        required: true
+      - name: title
+        type: string
+      - name: timestamp
+        type: datetime
+      - name: agent
+        type: string
+        description: "user / assistant / system"
+      - name: text
+        type: string
+        required: true
+      - name: content_hash
+        type: string
+        required: true
+        description: "SHA-256 of text"
+      - name: dk_relevance
+        type: string
+        enum: [DK_CORE, DK_ADJACENT, NON_DK]
+        required: true
+      - name: pillar_ids
+        type: list[string]
+        description: "MBv54 Pillar IDs referenced"
+      - name: levee_ids
+        type: list[string]
+        description: "MBv54 Levee IDs referenced"
+      - name: engine_ids
+        type: list[string]
+        description: "Six-Engine IDs referenced"
+      - name: ev_ids
+        type: list[string]
+        description: "EV-IDs referenced"
+      - name: sb_ids
+        type: list[string]
+        description: "SB-IDs referenced"
+      - name: mb_section_ref
+        type: list[string]
+        description: "MBv54 section references"
+      - name: has_detonator_ref
+        type: boolean
+      - name: deployment_status
+        type: string
+        enum: [main, appendix, quarantine]
+        required: true
+      - name: source
+        type: string
+        description: "chatgpt_export / adr_session / dk_support"
+
+  # ----------------------------------------------------------
+  # agents
+  # ----------------------------------------------------------
+  agents:
+    description: "Manus / Claude / Gemini / sub-agents and curated agent profiles"
+    tier: "T2"
+    fields:
+      - name: agent_id
+        type: string
+        required: true
+        description: "Unique agent ID (e.g., AGENT-MICHIGAN-001)"
+      - name: nexus_node_id
+        type: string
+        required: true
+      - name: name
+        type: string
+        required: true
+      - name: role
+        type: string
+        required: true
+        description: "e.g., Michigan MGCB Litigation Agent"
+      - name: model
+        type: string
+        description: "claude / gemini / openai / manus"
+      - name: allowed_ev_domains
+        type: list[string]
+        description: "Allowed evidence domains by cluster tag"
+      - name: allowed_tiers
+        type: list[string]
+        description: "e.g., [T1] or [T1, T2]"
+      - name: default_cypher_templates
+        type: list[string]
+        description: "Named Cypher query templates this agent uses"
+      - name: deployment_status
+        type: string
+        enum: [main, appendix, quarantine]
+        required: true
+      - name: created_at
+        type: datetime
+      - name: last_refreshed_at
+        type: datetime
+        description: "Last time the agent was refreshed from the corpus"

@@ -1,0 +1,95 @@
+# ============================================================
+# Agent Profile: CFTC Railbird Agent
+# ============================================================
+# Manus Directive v1.0, Section 7.1
+# NEXUS Node: NEXUS-031
+# ============================================================
+
+agent_id: "AGENT-CFTC-001"
+nexus_node_id: "NEXUS-031"
+name: "CFTC Railbird Agent"
+symbolic_name: "CFTC Agent"
+enterprise_name: "CFTC Railbird Agent"
+model: "claude"
+version: "1.0.0"
+deployment_status: "main"
+created_at: "2026-05-19T00:00:00Z"
+
+allowed_ev_domains:
+  - "cftc_railbird"
+  - "federal_regulatory"
+  - "market_manipulation"
+  - "insider_information"
+
+allowed_ev_id_ranges:
+  - "EV-020 through EV-029"   # CFTC Railbird core
+  - "EV-080 through EV-089"   # Market manipulation (placeholder)
+
+allowed_tiers:
+  - "T1"
+  - "T2"
+
+allowed_pillars:
+  - "PILLAR-03"   # CFTC Jurisdictional Exposure
+  - "PILLAR-14"   # Market Manipulation Evidence
+  - "PILLAR-15"   # Insider Information Flows
+  - "PILLAR-20"   # Federal Regulatory Crosswalk
+
+allowed_levees:
+  - "LEVEE-03"    # CFTC Jurisdiction Boundary
+  - "LEVEE-16"    # Market Manipulation Threshold
+  - "LEVEE-17"    # Insider Information Boundary
+  - "LEVEE-22"    # Federal Regulatory Compliance Boundary
+
+default_cypher_templates:
+  - name: "cftc_railbird"
+    description: "Retrieve all CFTC Railbird evidence"
+    cypher: |
+      MATCH (e:Evidence)-[:BELONGS_TO]->(c:EvidenceCluster {domain: 'cftc_railbird'})
+      WHERE e.tier IN ['T1', 'T2']
+      RETURN e.ev_id, e.evidence_text
+      ORDER BY e.ev_id
+
+  - name: "cftc_conversation_refs"
+    description: "ChatGPT messages referencing CFTC"
+    cypher: |
+      MATCH (conv:Conversation)-[:REFERENCES_EVIDENCE]->(e:Evidence)
+      WHERE e.ev_id IN ['EV-020','EV-021','EV-022']
+      AND conv.dk_relevance = 'DK_CORE'
+      RETURN conv.thread_id, conv.title, e.ev_id
+
+  - name: "federal_regulatory_crosswalk"
+    description: "Federal regulatory crosswalk for CFTC exposure"
+    cypher: |
+      MATCH (e:Evidence)-[:BELONGS_TO]->(c:EvidenceCluster)
+      WHERE c.domain IN ['cftc_railbird', 'federal_regulatory']
+      AND e.tier = 'T1'
+      MATCH (e)-[:SUPPORTS]->(t:Theory)
+      RETURN e.ev_id, t.name AS theory, e.evidence_text
+      ORDER BY e.ev_id
+
+system_prompt_template: |
+  You are the CFTC Railbird Agent for the DraftKings Data Nexus Codex.
+  Enterprise name: CFTC Railbird Agent
+  Symbolic name: CFTC Agent
+
+  NEXUS Governance Rules (MANDATORY):
+  - You may ONLY use evidence from: cftc_railbird, federal_regulatory, market_manipulation, insider_information
+  - You may ONLY use tiers: T1, T2
+  - All EV-IDs must be from EV-020–EV-029
+  - Never invent evidence. Label all T2 inferences as "[T2 inference]".
+  - Anchor all reasoning to MasterBrief_v54 as the controlling spine.
+
+  Your specialization:
+  - CFTC jurisdictional analysis and railbird data usage
+  - Federal regulatory crosswalk analysis
+  - Market manipulation pattern detection
+  - Insider information flow documentation
+
+  Monitor: PILLAR-03, LEVEE-03, LEVEE-16.
+
+refresh_triggers:
+  - "New MBv54 version added"
+  - "New CFTC evidence ingested (EV-020–EV-029 range)"
+  - "New federal regulatory crosswalk data added"
+  - "New github-gem-seeker DK_CORE batch processed"

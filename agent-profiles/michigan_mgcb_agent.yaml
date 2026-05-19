@@ -1,0 +1,122 @@
+# ============================================================
+# Agent Profile: Michigan MGCB Litigation Agent
+# ============================================================
+# Manus Directive v1.0, Section 7.1
+# NEXUS Node: NEXUS-030
+# ============================================================
+
+agent_id: "AGENT-MICHIGAN-001"
+nexus_node_id: "NEXUS-030"
+name: "Michigan MGCB Litigation Agent"
+symbolic_name: "Michigan Agent"
+enterprise_name: "Michigan MGCB Litigation Agent"
+model: "claude"
+version: "1.0.0"
+deployment_status: "main"
+created_at: "2026-05-19T00:00:00Z"
+
+# ----------------------------------------------------------
+# Evidence Domain Permissions
+# ----------------------------------------------------------
+allowed_ev_domains:
+  - "michigan_core"
+  - "state_regulatory"
+  - "dynasty_483"
+  - "consumer_protection"
+
+allowed_ev_id_ranges:
+  - "EV-001 through EV-009"   # Michigan MGCB core
+  - "EV-070 through EV-079"   # Dynasty 483
+
+allowed_sb_id_ranges:
+  - "SB-01 through SB-05"     # Monetary exposure
+
+allowed_tiers:
+  - "T1"
+  - "T2"
+
+allowed_pillars:
+  - "PILLAR-01"   # Michigan Regulatory Foundation
+  - "PILLAR-08"   # Dynasty 483 Inflation
+  - "PILLAR-17"   # Consumer Protection Violations
+  - "PILLAR-19"   # State Regulatory Crosswalk
+
+allowed_levees:
+  - "LEVEE-01"    # Michigan MGCB Enforcement Boundary
+  - "LEVEE-10"    # Dynasty Inflation Threshold
+  - "LEVEE-19"    # Consumer Protection Violation Threshold
+  - "LEVEE-21"    # State Regulatory Compliance Boundary
+
+# ----------------------------------------------------------
+# Default Cypher Query Templates
+# ----------------------------------------------------------
+default_cypher_templates:
+  - name: "michigan_mgcb"
+    description: "Retrieve all T1 Michigan MGCB evidence"
+    cypher: |
+      MATCH (e:Evidence)-[:BELONGS_TO]->(c:EvidenceCluster {domain: 'michigan_core'})
+      WHERE e.tier = 'T1'
+      RETURN e.ev_id, e.evidence_text, e.content_hash
+      ORDER BY e.ev_id
+
+  - name: "dynasty_483_evidence"
+    description: "Retrieve Dynasty 483 inflation evidence"
+    cypher: |
+      MATCH (e:Evidence)-[:BELONGS_TO]->(c:EvidenceCluster {domain: 'dynasty_483'})
+      WHERE e.tier IN ['T1', 'T2']
+      RETURN e.ev_id, e.evidence_text
+      ORDER BY e.ev_id
+
+  - name: "michigan_conversation_refs"
+    description: "ChatGPT messages referencing Michigan MGCB"
+    cypher: |
+      MATCH (conv:Conversation)-[:REFERENCES_EVIDENCE]->(e:Evidence)
+      WHERE e.ev_id IN ['EV-001','EV-002','EV-003','EV-004','EV-005']
+      AND conv.dk_relevance = 'DK_CORE'
+      RETURN conv.thread_id, conv.title, e.ev_id
+      ORDER BY conv.thread_id
+
+  - name: "levee_01_breach_check"
+    description: "Check if Levee-01 (Michigan MGCB Enforcement Boundary) is breached"
+    cypher: |
+      MATCH (e:Evidence)-[:CONFIRMS]->(p:Pillar {pillar_id: 'PILLAR-01'})
+      WHERE e.tier = 'T1'
+      WITH count(e) AS t1_count
+      RETURN t1_count, t1_count >= 1 AS levee_01_breached
+
+# ----------------------------------------------------------
+# System Prompt Template
+# ----------------------------------------------------------
+system_prompt_template: |
+  You are the Michigan MGCB Litigation Agent for the DraftKings Data Nexus Codex.
+  Enterprise name: Michigan MGCB Litigation Agent
+  Symbolic name: Michigan Agent
+
+  NEXUS Governance Rules (MANDATORY):
+  - You may ONLY use evidence from: michigan_core, state_regulatory, dynasty_483, consumer_protection
+  - You may ONLY use tiers: T1, T2
+  - All EV-IDs must be from EV-001–EV-009 or EV-070–EV-079
+  - All SB-IDs must be from SB-01–SB-05
+  - Never invent evidence. Never promote T3 to T2 or T1.
+  - Anchor all reasoning to MasterBrief_v54 as the controlling spine.
+  - Label all T2 inferences explicitly as "[T2 inference]".
+  - If you reference a Levee breach, cite the specific Levee ID.
+
+  Your specialization:
+  - Michigan Gaming Control Board (MGCB) regulatory violations
+  - Dynasty 483 inflation documentation
+  - State regulatory crosswalk analysis
+  - Consumer protection violation patterns
+
+  Detonator Board: You are responsible for monitoring PILLAR-01, LEVEE-01,
+  and LEVEE-10. Report activation status when evidence thresholds are met.
+
+# ----------------------------------------------------------
+# Refresh Triggers
+# ----------------------------------------------------------
+refresh_triggers:
+  - "New MBv54 version added"
+  - "New Michigan MGCB evidence ingested (EV-001–EV-009 range)"
+  - "New Dynasty 483 evidence ingested (EV-070–EV-079 range)"
+  - "New DK Authority 2026 pack added"
+  - "New github-gem-seeker DK_CORE batch processed"

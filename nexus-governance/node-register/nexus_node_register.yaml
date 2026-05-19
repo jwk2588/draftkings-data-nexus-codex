@@ -1,0 +1,203 @@
+# ============================================================
+# NEXUS Node Register
+# ============================================================
+# Central registry of all NEXUS nodes in the DraftKings
+# Data Nexus Codex. Every dataset, table, or graph node
+# must be registered here with node_id, tier, source, and
+# deployment_status before it can be used in control logic.
+#
+# deployment_status values:
+#   main       = safe for main prose/code and control logic
+#   appendix   = discovery/roadmap only, never control logic
+#   quarantine = under review, not to be used
+# ============================================================
+
+version: "1.0.0"
+authority: "MBv54 Legal Spine + Manus Directive v1.0"
+
+nodes:
+
+  # --- Legal Spine Nodes ---
+  - node_id: "NEXUS-001"
+    label: "MBv54LegalSpine"
+    tier: "T1"
+    primary_source_id: "MasterBrief_v54_CONSOLIDATED-2.docx"
+    description: "The controlling legal and evidentiary spine. EV-001–EV-291, SB-01–SB-66."
+    deployment_status: "main"
+    symbolic_name: "MBv54 Legal Spine"
+    enterprise_name: "Canonical Evidence Governance Framework v54"
+
+  - node_id: "NEXUS-002"
+    label: "MBv52Host"
+    tier: "T2"
+    primary_source_id: "MBv52_Reformatted"
+    description: "Retained depth only. Never controlling text."
+    deployment_status: "appendix"
+    symbolic_name: "v52 Host"
+    enterprise_name: "MasterBrief v52 Retained Depth Archive"
+
+  - node_id: "NEXUS-003"
+    label: "DKConversationSummary"
+    tier: "T2"
+    primary_source_id: "DK-Master-Conversation-Summary"
+    description: "Retained depth only. Never controlling text."
+    deployment_status: "appendix"
+    symbolic_name: "Conversation Summary"
+    enterprise_name: "DK Master Conversation Summary Archive"
+
+  # --- Evidence Domain Nodes ---
+  - node_id: "NEXUS-010"
+    label: "EvidenceCluster_MichiganCore"
+    tier: "T1"
+    primary_source_id: "NEXUS-001"
+    description: "Michigan MGCB core evidence cluster. EV-001–EV-009."
+    deployment_status: "main"
+    symbolic_name: "Michigan Core"
+    enterprise_name: "Michigan MGCB Litigation Evidence Cluster"
+
+  - node_id: "NEXUS-011"
+    label: "EvidenceCluster_ASC606"
+    tier: "T1"
+    primary_source_id: "NEXUS-001"
+    description: "ASC 606 calendar bleed and revenue recognition cluster. EV-010–EV-019."
+    deployment_status: "main"
+    symbolic_name: "Engine 3 / Calendar Bleed"
+    enterprise_name: "ASC 606 Revenue Recognition Evidence Cluster"
+
+  - node_id: "NEXUS-012"
+    label: "EvidenceCluster_CFTC"
+    tier: "T1"
+    primary_source_id: "NEXUS-001"
+    description: "CFTC jurisdictional exposure cluster. EV-020–EV-029."
+    deployment_status: "main"
+    symbolic_name: "CFTC Railbird"
+    enterprise_name: "CFTC Jurisdictional Exposure Evidence Cluster"
+
+  - node_id: "NEXUS-013"
+    label: "EvidenceCluster_Apple"
+    tier: "T1"
+    primary_source_id: "NEXUS-001"
+    description: "Apple platform economics cluster. EV-030–EV-039."
+    deployment_status: "main"
+    symbolic_name: "Apple Lane"
+    enterprise_name: "Apple Platform Economics Evidence Cluster"
+
+  - node_id: "NEXUS-014"
+    label: "EvidenceCluster_PrivacyAML"
+    tier: "T1"
+    primary_source_id: "NEXUS-001"
+    description: "Privacy and AML compliance gap cluster. EV-040–EV-049."
+    deployment_status: "main"
+    symbolic_name: "Privacy/AML"
+    enterprise_name: "Privacy & AML Compliance Evidence Cluster"
+
+  - node_id: "NEXUS-015"
+    label: "EvidenceCluster_RICO"
+    tier: "T1"
+    primary_source_id: "NEXUS-001"
+    description: "RICO pattern evidence cluster. EV-050–EV-059."
+    deployment_status: "main"
+    symbolic_name: "RICO"
+    enterprise_name: "RICO Pattern Evidence Cluster"
+
+  - node_id: "NEXUS-016"
+    label: "EvidenceCluster_AutoZone"
+    tier: "T1"
+    primary_source_id: "NEXUS-001"
+    description: "AutoZone competitive lane cluster. EV-060–EV-069."
+    deployment_status: "main"
+    symbolic_name: "AutoZone Lane"
+    enterprise_name: "AutoZone Competitive Lane Evidence Cluster"
+
+  - node_id: "NEXUS-017"
+    label: "EvidenceCluster_Dynasty483"
+    tier: "T1"
+    primary_source_id: "NEXUS-001"
+    description: "Dynasty 483 inflation cluster. EV-070–EV-079."
+    deployment_status: "main"
+    symbolic_name: "Dynasty 483"
+    enterprise_name: "Dynasty 483 Inflation Evidence Cluster"
+
+  # --- ChatGPT ETL Nodes ---
+  - node_id: "NEXUS-020"
+    label: "ChatGPTExport_Raw"
+    tier: "T2"
+    primary_source_id: "conversations (2).json"
+    description: "Raw ChatGPT export. Unclassified. Not safe for control logic until classified."
+    deployment_status: "quarantine"
+    symbolic_name: "ChatGPT Raw"
+    enterprise_name: "ChatGPT Export Raw Dataset"
+
+  - node_id: "NEXUS-021"
+    label: "ChatGPTExport_DK_CORE"
+    tier: "T2"
+    primary_source_id: "NEXUS-020"
+    description: "DK_CORE classified ChatGPT messages. Directly about DraftKings/Dynasty/MB."
+    deployment_status: "main"
+    symbolic_name: "ChatGPT DK Core"
+    enterprise_name: "ChatGPT Export DK Core Dataset"
+
+  - node_id: "NEXUS-022"
+    label: "ChatGPTExport_DK_ADJACENT"
+    tier: "T2"
+    primary_source_id: "NEXUS-020"
+    description: "DK_ADJACENT classified messages. Legal/accounting/gaming context."
+    deployment_status: "appendix"
+    symbolic_name: "ChatGPT DK Adjacent"
+    enterprise_name: "ChatGPT Export DK Adjacent Dataset"
+
+  - node_id: "NEXUS-023"
+    label: "ChatGPTExport_NON_DK"
+    tier: "T3"
+    primary_source_id: "NEXUS-020"
+    description: "NON_DK classified messages. Not relevant to DraftKings work."
+    deployment_status: "quarantine"
+    symbolic_name: "ChatGPT Non-DK"
+    enterprise_name: "ChatGPT Export Non-DK Dataset"
+
+  # --- Agent Nodes ---
+  - node_id: "NEXUS-030"
+    label: "Agent_MichiganMGCB"
+    tier: "T2"
+    primary_source_id: "NEXUS-010"
+    description: "Michigan MGCB Litigation Agent. Allowed domains: michigan_core, state_regulatory."
+    deployment_status: "main"
+    symbolic_name: "Michigan Agent"
+    enterprise_name: "Michigan MGCB Litigation Agent"
+
+  - node_id: "NEXUS-031"
+    label: "Agent_CFTCRailbird"
+    tier: "T2"
+    primary_source_id: "NEXUS-012"
+    description: "CFTC Railbird Agent. Allowed domains: cftc_railbird, federal_regulatory."
+    deployment_status: "main"
+    symbolic_name: "CFTC Agent"
+    enterprise_name: "CFTC Railbird Agent"
+
+  - node_id: "NEXUS-032"
+    label: "Agent_ASC606Audit"
+    tier: "T2"
+    primary_source_id: "NEXUS-011"
+    description: "ASC 606 Audit Agent. Allowed domains: asc_606_calendar_bleed, deferred_revenue."
+    deployment_status: "main"
+    symbolic_name: "ASC 606 Agent"
+    enterprise_name: "ASC 606 Audit Agent"
+
+  # --- Graph Infrastructure Nodes ---
+  - node_id: "NEXUS-040"
+    label: "GraphMutationEventLog"
+    tier: "T1"
+    primary_source_id: "evidence_constraints.yaml"
+    description: "Immutable append-only log of all graph mutations."
+    deployment_status: "main"
+    symbolic_name: "Mutation Log"
+    enterprise_name: "Graph Mutation Event Log"
+
+  - node_id: "NEXUS-041"
+    label: "DetectorBoard"
+    tier: "T1"
+    primary_source_id: "NEXUS-001"
+    description: "Detonator Board convergence logic. Activates on Levee breach threshold."
+    deployment_status: "main"
+    symbolic_name: "Detonator Board"
+    enterprise_name: "High-Impact Decision Trigger Matrix"

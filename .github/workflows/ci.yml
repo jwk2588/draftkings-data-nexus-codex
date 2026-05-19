@@ -1,0 +1,149 @@
+name: DraftKings Data Nexus Codex — CI
+
+on:
+  push:
+    branches: [develop, data-lab]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    name: Lint, Schema Validation & Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install polars pyarrow pyyaml fastapi uvicorn pydantic pytest ruff
+
+      - name: Lint (ruff)
+        run: |
+          ruff check nexus_governance/ github-gem-seeker/ manus_api/ --ignore E501 || true
+
+      - name: Validate frozen schema YAMLs
+        run: |
+          python3 -c "
+          import yaml, sys
+          files = [
+            'schema/node_types.yaml',
+            'schema/relationship_types.yaml',
+            'schema/tier_rules.yaml',
+            'schema/evidence_constraints.yaml',
+            'legal-spine/mbv54/mbv54_spine.yaml',
+            'nexus-governance/node-register/nexus_node_register.yaml',
+          ]
+          for f in files:
+            try:
+              with open(f) as fh:
+                yaml.safe_load(fh)
+              print(f'PASS: {f}')
+            except Exception as e:
+              print(f'FAIL: {f} — {e}')
+              sys.exit(1)
+          "
+
+      - name: Validate EV/SB ID ranges (no renumbering)
+        run: |
+          python3 -c "
+          import yaml
+          with open('legal-spine/mbv54/mbv54_spine.yaml') as f:
+            spine = yaml.safe_load(f)
+          ev_end = spine['evidence_id_range']['end']
+          sb_end = spine['silver_bullet_id_range']['end']
+          assert ev_end == 'EV-291', f'EV range tampered: {ev_end}'
+          assert sb_end == 'SB-66', f'SB range tampered: {sb_end}'
+          print(f'PASS: EV range ends at {ev_end}, SB range ends at {sb_end}')
+          "
+
+      - name: Run NEXUS evidence confidence gate tests
+        run: |
+          python3 -c "
+          import sys
+          sys.path.insert(0, '.')
+          from nexus_governance.evidence_gates.evidence_confidence_gate import (
+            NexusNode, Tier, DeploymentStatus, EvidenceConfidenceGate,
+            FrozenIDViolation, TierViolation
+          )
+          gate = EvidenceConfidenceGate()
+
+          # Test 1: Valid T1 node passes
+          node = NexusNode(
+            node_id='TEST-001', label='Evidence', tier=Tier.T1,
+            primary_source_id='MasterBrief_v54_CONSOLIDATED-2.docx',
+            description='Test', deployment_status=DeploymentStatus.MAIN, ev_id='EV-001'
+          )
+          result = gate.run_all_checks(node, actor='chatgpt_etl')
+          assert result['passed'], 'Test 1 failed'
+          print('PASS: Valid T1 node passes gate')
+
+          # Test 2: Out-of-range EV-ID rejected
+          try:
+            node2 = NexusNode(
+              node_id='TEST-002', label='Evidence', tier=Tier.T1,
+              primary_source_id='MasterBrief_v54_CONSOLIDATED-2.docx',
+              description='Test', deployment_status=DeploymentStatus.MAIN, ev_id='EV-999'
+            )
+            gate.run_all_checks(node2, actor='chatgpt_etl')
+            assert False, 'Should have raised FrozenIDViolation'
+          except FrozenIDViolation:
+            print('PASS: EV-999 correctly rejected (frozen range)')
+
+          # Test 3: Unauthorized actor for T1 rejected
+          try:
+            gate.run_all_checks(node, actor='copilot_unsupervised')
+            assert False, 'Should have raised TierViolation'
+          except TierViolation:
+            print('PASS: Unauthorized T1 actor correctly rejected')
+
+          print('All gate tests passed.')
+          "
+
+      - name: Run github-gem-seeker pipeline (synthetic data)
+        run: |
+          python3 github-gem-seeker/pipeline.py
+
+      - name: Validate manus-api routes
+        run: |
+          python3 -c "
+          import sys
+          sys.path.insert(0, '.')
+          from manus_api.main import app
+          routes = {r.path for r in app.routes}
+          required = {'/health', '/datasets/register', '/graph/query', '/agents/orchestrate', '/graphrag/query', '/detonator/status'}
+          missing = required - routes
+          assert not missing, f'Missing routes: {missing}'
+          print(f'PASS: All {len(required)} required routes present')
+          "
+
+  schema-change-guard:
+    name: Schema Change Guard (PR to main only)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect schema changes
+        run: |
+          CHANGED=$(git diff --name-only origin/main...HEAD | grep -E 'schema/|nexus-governance/|legal-spine/' || true)
+          if [ -n "$CHANGED" ]; then
+            echo "SCHEMA CHANGE DETECTED in PR to main:"
+            echo "$CHANGED"
+            echo ""
+            echo "Per CONTRIBUTING.md: All schema changes must be reviewed by Claude."
+            echo "Please include a Claude-generated schema review in the PR description."
+            echo "Tag this PR with 'schema-change' before merging."
+          else
+            echo "No schema changes detected."
+          fi

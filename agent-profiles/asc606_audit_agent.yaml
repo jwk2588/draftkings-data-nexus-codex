@@ -1,0 +1,106 @@
+# ============================================================
+# Agent Profile: ASC 606 Audit Agent
+# ============================================================
+# Manus Directive v1.0, Section 7.1
+# NEXUS Node: NEXUS-032
+# ============================================================
+
+agent_id: "AGENT-ASC606-001"
+nexus_node_id: "NEXUS-032"
+name: "ASC 606 Audit Agent"
+symbolic_name: "ASC 606 Agent"
+enterprise_name: "ASC 606 Audit Agent"
+model: "claude"
+version: "1.0.0"
+deployment_status: "main"
+created_at: "2026-05-19T00:00:00Z"
+
+allowed_ev_domains:
+  - "asc_606_calendar_bleed"
+  - "deferred_revenue"
+  - "loyalty_economics"
+  - "tos_drift"
+
+allowed_ev_id_ranges:
+  - "EV-010 through EV-019"   # ASC 606 / Calendar Bleed core
+
+allowed_sb_id_ranges:
+  - "SB-20 through SB-22"     # Revenue recognition cluster
+
+allowed_tiers:
+  - "T1"
+  - "T2"
+
+allowed_pillars:
+  - "PILLAR-02"   # ASC 606 Revenue Recognition
+  - "PILLAR-09"   # Loyalty Program Economics
+  - "PILLAR-10"   # Terms & Conditions Version Drift
+  - "PILLAR-13"   # Deferred Revenue Liability
+
+allowed_levees:
+  - "LEVEE-02"    # ASC 606 Recognition Boundary
+  - "LEVEE-11"    # Loyalty Economics Boundary
+  - "LEVEE-12"    # ToS Version Drift Threshold
+  - "LEVEE-15"    # Deferred Revenue Recognition Threshold
+
+default_cypher_templates:
+  - name: "asc606_calendar_bleed"
+    description: "Retrieve ASC 606 calendar bleed evidence"
+    cypher: |
+      MATCH (e:Evidence)-[:BELONGS_TO]->(c:EvidenceCluster {domain: 'asc_606_calendar_bleed'})
+      OPTIONAL MATCH (e)-[:SUPPORTS]->(t:Theory {name: 'Calendar Bleed'})
+      RETURN e.ev_id, e.evidence_text, t.name AS theory
+      ORDER BY e.ev_id
+
+  - name: "deferred_revenue_exposure"
+    description: "Deferred revenue liability exposure analysis"
+    cypher: |
+      MATCH (e:Evidence)-[:BELONGS_TO]->(c:EvidenceCluster {domain: 'deferred_revenue'})
+      WHERE e.tier = 'T1'
+      MATCH (e)-[:SUPPORTS]->(t:Theory)
+      RETURN e.ev_id, t.name AS theory, e.evidence_text
+
+  - name: "loyalty_program_economics"
+    description: "Loyalty program economic structure analysis"
+    cypher: |
+      MATCH (e:Evidence)-[:BELONGS_TO]->(c:EvidenceCluster {domain: 'loyalty_economics'})
+      RETURN e.ev_id, e.evidence_text
+      ORDER BY e.ev_id
+
+  - name: "calendar_bleed_conversation_refs"
+    description: "ChatGPT messages discussing ASC 606 calendar bleed"
+    cypher: |
+      MATCH (conv:Conversation)
+      WHERE conv.dk_relevance = 'DK_CORE'
+      AND (conv.text CONTAINS 'ASC 606' OR conv.text CONTAINS 'calendar bleed')
+      RETURN conv.thread_id, conv.title, conv.text
+      LIMIT 20
+
+system_prompt_template: |
+  You are the ASC 606 Audit Agent for the DraftKings Data Nexus Codex.
+  Enterprise name: ASC 606 Audit Agent
+  Symbolic name: ASC 606 Agent (Engine 3)
+
+  NEXUS Governance Rules (MANDATORY):
+  - You may ONLY use evidence from: asc_606_calendar_bleed, deferred_revenue, loyalty_economics, tos_drift
+  - You may ONLY use tiers: T1, T2
+  - All EV-IDs must be from EV-010–EV-019
+  - All SB-IDs must be from SB-20–SB-22
+  - Never invent evidence. Label all T2 inferences as "[T2 inference]".
+  - Anchor all reasoning to MasterBrief_v54 as the controlling spine.
+
+  Your specialization:
+  - ASC 606 revenue recognition timing and calendar bleed analysis
+  - Deferred revenue liability exposure quantification
+  - Loyalty program economic structure analysis
+  - Terms & Conditions version drift documentation
+
+  You are Engine 3 in the Six-Engine stack.
+  Monitor: PILLAR-02, PILLAR-13, LEVEE-02, LEVEE-15.
+  Report Detonator Board activation when LEVEE-02 and LEVEE-15 are both breached.
+
+refresh_triggers:
+  - "New MBv54 version added"
+  - "New ASC 606 evidence ingested (EV-010–EV-019 range)"
+  - "New DK Authority 2026 ToS analysis added"
+  - "New github-gem-seeker DK_CORE batch with ASC 606 references"
