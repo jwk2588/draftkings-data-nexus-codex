@@ -1,0 +1,283 @@
+{
+  "chatgpt": {
+    "totals": {
+      "conversations": 910,
+      "messages": 40250,
+      "cross_stitches": 23856
+    },
+    "date_range": [
+      "2023-06-06",
+      "2025-05-01"
+    ],
+    "gr_hits": [
+      [
+        "GR-010",
+        5186
+      ],
+      [
+        "GR-001",
+        4699
+      ],
+      [
+        "GR-008",
+        2583
+      ],
+      [
+        "GR-007",
+        2134
+      ],
+      [
+        "GR-009",
+        1972
+      ],
+      [
+        "GR-006",
+        1741
+      ],
+      [
+        "GR-012",
+        1120
+      ],
+      [
+        "GR-003",
+        901
+      ],
+      [
+        "GR-002",
+        466
+      ],
+      [
+        "GR-005",
+        350
+      ],
+      [
+        "GR-004",
+        181
+      ],
+      [
+        "GR-011",
+        33
+      ]
+    ],
+    "top_convs": [
+      [
+        "opioid advocacy state subtrust",
+        1279,
+        "gpt-4-code-interpreter"
+      ],
+      [
+        "Improving FP&A Skills",
+        1048,
+        "gpt-4o"
+      ],
+      [
+        "JMP Consolidated Metrics",
+        1043,
+        "text-davinci-002-render-sha"
+      ],
+      [
+        "Emotional Support and Advice",
+        1038,
+        "gpt-4o"
+      ],
+      [
+        "Python FP&A Project Ideas",
+        1034,
+        "gpt-4o-canmore"
+      ],
+      [
+        "ROA Analysis and Control Failures",
+        880,
+        "gpt-4o"
+      ],
+      [
+        "Sub Trust Valuation Process",
+        773,
+        "gpt-4o"
+      ],
+      [
+        "Remnants ",
+        761,
+        "gpt-4o"
+      ],
+      [
+        "Advanced Voice Mode Explanation",
+        666,
+        "o1-pro"
+      ],
+      [
+        "Purdue Pharma Shareholder Distributions",
+        580,
+        "gpt-4"
+      ]
+    ],
+    "models": [
+      [
+        "gpt-4o",
+        387
+      ],
+      [
+        "unknown",
+        285
+      ],
+      [
+        "gpt-4",
+        132
+      ],
+      [
+        "o1-pro",
+        24
+      ],
+      [
+        "auto",
+        24
+      ],
+      [
+        "gpt-4-gizmo",
+        20
+      ],
+      [
+        "text-davinci-002-render-sha",
+        10
+      ],
+      [
+        "o3-mini-high",
+        7
+      ],
+      [
+        "research",
+        6
+      ],
+      [
+        "o1-preview",
+        4
+      ],
+      [
+        "gpt-4-plugins",
+        4
+      ],
+      [
+        "gpt-4o-mini",
+        3
+      ],
+      [
+        "o3-mini",
+        1
+      ],
+      [
+        "o1-mini",
+        1
+      ],
+      [
+        "gpt-4o-canmore",
+        1
+      ],
+      [
+        "gpt-4-code-interpreter",
+        1
+      ]
+    ],
+    "stitch_types": [
+      [
+        "MSG_GR",
+        21366
+      ],
+      [
+        "TAG_INJECT",
+        2410
+      ],
+      [
+        "MSG_EV",
+        80
+      ]
+    ]
+  },
+  "hivemind": {
+    "raw_objects": 632,
+    "ocr_extracts": 125,
+    "canonical_entities": 18,
+    "graph_edges": 5000,
+    "error": "relation \"audit_event_ledger\" does not exist\nLINE 1: SELECT COUNT(*) FROM audit_event_ledger\n                             ^\n"
+  },
+  "photos": {
+    "total_files": 11360,
+    "year_dist": [
+      [
+        "01",
+        134
+      ],
+      [
+        "02",
+        4
+      ],
+      [
+        "03",
+        162
+      ],
+      [
+        "04",
+        165
+      ],
+      [
+        "05",
+        3304
+      ],
+      [
+        "06",
+        539
+      ],
+      [
+        "07",
+        387
+      ],
+      [
+        "08",
+        717
+      ],
+      [
+        "09",
+        1112
+      ],
+      [
+        "10",
+        1160
+      ],
+      [
+        "11",
+        1004
+      ],
+      [
+        "12",
+        2672
+      ]
+    ],
+    "format_dist": [
+      [
+        "PNG",
+        11230
+      ],
+      [
+        "HEIC",
+        93
+      ],
+      [
+        "JPG",
+        27
+      ],
+      [
+        "MP4",
+        9
+      ],
+      [
+        "MOV",
+        1
+      ]
+    ]
+  },
+  "kimi": [
+    {
+      "file": "/home/ubuntu/HiveMind/MASTER_INTELLIGENCE_BRIEF.md",
+      "size_kb": 17
+    }
+  ]
+}
