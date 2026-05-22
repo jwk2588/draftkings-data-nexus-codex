@@ -25,7 +25,12 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            pip install pandas numpy matplotlib
+          fi
 
       - name: Bootstrap NEXUS DB
         run: python scripts/nexus_db.py
