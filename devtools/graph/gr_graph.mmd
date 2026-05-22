@@ -1,0 +1,21 @@
+graph TD
+    GR-001["GR-001: GPS/Snappy_VIE_&_Pri"]
+    GR-001 -->|cascade| GR-002
+    GR-001 -->|cascade| GR-011
+    GR-003["GR-003: Binary_Settlement_/_"]
+    GR-003 -->|cascade| GR-009
+    GR-002["GR-002: Opaque_Fulfillment_/"]
+    GR-002 -->|cascade| GR-011
+    GR-011["GR-011: BDO_/_SOX_404(b)_Wit"]
+    GR-011 -->|cascade| GR-012
+    GR-004["GR-004: Apple_Bundle_/_ARV_A"]
+    GR-004 -->|cascade| GR-012
+    GR-009["GR-009: Calendar_Bleed_/_Per"]
+    GR-008["GR-008: VIP_Host_Off-Book_Re"]
+    GR-008 -->|cascade| GR-011
+    GR-010["GR-010: MGCB_Material_Change"]
+    GR-012["GR-012: Platform_Guardian_/_"]
+    GR-005["GR-005: No_Monetary_Value_vs"]
+    GR-006["GR-006: Terms/Privacy_Fragme"]
+    GR-006 -->|cascade| GR-012
+    GR-007["GR-007: 550:1_CAD_/_Currency"]

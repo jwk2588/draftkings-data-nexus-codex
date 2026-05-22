@@ -1,0 +1,44 @@
+name: CHESS Moat Monitor
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # Every 6 hours
+  workflow_dispatch:
+
+jobs:
+  moat-monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run CHESS Monitor
+        run: |
+          python -c "
+          import sys, json
+          sys.path.insert(0, 'scripts')
+          from nexus_db import NexusDB
+          from fetty_fm import ChessEngine
+          db = NexusDB()
+          db.init_schema()
+          db.seed_gr_nodes()
+          db.seed_chess_pieces()
+          chess = ChessEngine(db)
+          report = chess.full_report()
+          print('[CHESS MONITOR]')
+          print(f'Moat Score:    {report["moat_score"]:.4f}')
+          print(f'Rule Pressure: {report["rule_pressure"]:.4f}')
+          print(f'Settlement:    {report["settlement_window_open"]}')
+          print(f'Collapse Prob: {report["collapse_probability"]:.1%}')
+          if report['settlement_window_open']:
+              print('ALERT: Settlement window OPEN')
+          db.close()
+          "
+        env:
+          NEXUS_DB_PATH: ${{ github.workspace }}/nexus_master.db

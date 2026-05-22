@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NEXUS GR Node Schema",
+  "type": "object",
+  "required": [
+    "gr_id",
+    "name",
+    "impact",
+    "health",
+    "status"
+  ],
+  "properties": {
+    "gr_id": {
+      "type": "string",
+      "pattern": "^GR-\\d{3}$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "impact": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "health": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "READY",
+        "PENDING",
+        "BLOCKED",
+        "FIRED"
+      ]
+    },
+    "agent_route": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "evidence_links": {
+      "type": "array"
+    },
+    "cascade_trigger": {
+      "type": "number"
+    },
+    "cascade_targets": {
+      "type": "array"
+    },
+    "node_category": {
+      "type": "string",
+      "enum": [
+        "Alpha",
+        "Beta",
+        "Gamma",
+        "Delta",
+        "Omega"
+      ]
+    }
+  }
+}

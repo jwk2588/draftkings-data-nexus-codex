@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NEXUS Evidence Schema",
+  "description": "Schema for NEXUS EV-NNN evidence artifacts",
+  "type": "object",
+  "required": [
+    "ev_id",
+    "shortname",
+    "status",
+    "confidence"
+  ],
+  "properties": {
+    "ev_id": {
+      "type": "string",
+      "pattern": "^EV-\\d{3}$"
+    },
+    "shortname": {
+      "type": "string"
+    },
+    "ev_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "CONFIRMED",
+        "TENTATIVE",
+        "CHALLENGED"
+      ]
+    },
+    "source_file": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "T1",
+        "T2",
+        "T3",
+        "T4"
+      ]
+    },
+    "gr_links": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^GR-\\d{3}$"
+      }
+    },
+    "chain_prev": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "chain_next": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

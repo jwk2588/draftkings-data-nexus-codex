@@ -1,0 +1,24 @@
+{
+  "_artifact_type": "bridge",
+  "_nexus_version": "v2.0",
+  "id": 65,
+  "bridge_id": "Bridge-GR-010-GR-007",
+  "domain_a": "GR-010: MGCB Material Change / Michigan Core",
+  "domain_b": "GR-007: 550:1 CAD / Currency Valuation",
+  "bridge_type": "Standard",
+  "strength": 0.599,
+  "status": "CANDIDATE",
+  "description": "Cross-domain bridge between MGCB Material Change / Michigan Core and 550:1 CAD / Currency Valuation. Combined impact: 17.1/20. Domain overlap: 0.0%.",
+  "litigation_text": null,
+  "ev_links": [
+    "EV-293",
+    "EV-292"
+  ],
+  "gr_links": [
+    "GR-010",
+    "GR-007"
+  ],
+  "validated_by": [],
+  "created_at": "2026-05-19 10:12:30",
+  "updated_at": "2026-05-19 10:12:30"
+}

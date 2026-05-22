@@ -1,0 +1,106 @@
+{
+  "_artifact_type": "chess_state",
+  "_nexus_version": "v2.0",
+  "moat_score": 0.6083,
+  "rule_pressure": 1.0,
+  "settlement_window_open": true,
+  "settlement_range": {
+    "scenario": "A",
+    "low": 180000000,
+    "high": 250000000,
+    "label": "Platform removal triggers \u2014 $180M\u2013$250M"
+  },
+  "piece_status": [
+    {
+      "piece": "King",
+      "function": "Platform/License",
+      "health": 0.72,
+      "weight": 0.2,
+      "contribution": 0.144,
+      "status": "STABLE"
+    },
+    {
+      "piece": "Queen",
+      "function": "Rewards Engine",
+      "health": 0.58,
+      "weight": 0.18,
+      "contribution": 0.1044,
+      "status": "DEGRADED"
+    },
+    {
+      "piece": "Rook_A",
+      "function": "Accounting/Audit",
+      "health": 0.61,
+      "weight": 0.15,
+      "contribution": 0.0915,
+      "status": "STABLE"
+    },
+    {
+      "piece": "Gorgon",
+      "function": "Regulatory License Portfolio",
+      "health": 0.48,
+      "weight": 0.15,
+      "contribution": 0.072,
+      "status": "DEGRADED"
+    },
+    {
+      "piece": "Rook_B",
+      "function": "Regulatory Compliance",
+      "health": 0.65,
+      "weight": 0.14,
+      "contribution": 0.091,
+      "status": "STABLE"
+    },
+    {
+      "piece": "Bishop",
+      "function": "Consumer Trust",
+      "health": 0.55,
+      "weight": 0.1,
+      "contribution": 0.055,
+      "status": "DEGRADED"
+    },
+    {
+      "piece": "Knight",
+      "function": "VIP/Relationship Layer",
+      "health": 0.63,
+      "weight": 0.08,
+      "contribution": 0.0504,
+      "status": "STABLE"
+    }
+  ],
+  "collapse_timeline": [
+    [
+      1,
+      "Apple & Google remove app from stores"
+    ],
+    [
+      2,
+      "DK stock drops 18\u201323% (market cap -$3B)"
+    ],
+    [
+      3,
+      "Institutional investors file derivative suits"
+    ],
+    [
+      5,
+      "BDO withdraws audit opinion (GR-011 cascade)"
+    ],
+    [
+      7,
+      "PCAOB enforcement likely"
+    ],
+    [
+      14,
+      "DK credit rating downgrade"
+    ],
+    [
+      21,
+      "Settlement demand: $180\u2013$400M"
+    ],
+    [
+      72,
+      "~95%+ settlement probability"
+    ]
+  ],
+  "collapse_probability": 0.635
+}

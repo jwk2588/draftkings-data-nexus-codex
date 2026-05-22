@@ -1,0 +1,62 @@
+name: ADR Package Generator
+on:
+  workflow_dispatch:
+    inputs:
+      gr_nodes:
+        description: 'Comma-separated GR node IDs (e.g. GR-001,GR-003,GR-011)'
+        required: false
+        default: 'GR-001,GR-003,GR-004,GR-008,GR-011'
+
+jobs:
+  generate-adr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.NEXUS_GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate ADR Package
+        run: |
+          python -c "
+          import sys, json, datetime
+          sys.path.insert(0, 'scripts')
+          from nexus_db import NexusDB
+          from agent_pipelines import SuitsPipeline, BridgerPipeline
+          db = NexusDB()
+          db.init_schema()
+          db.seed_gr_nodes()
+          db.seed_chess_pieces()
+          db.seed_evidence_register()
+          bridger = BridgerPipeline(db=db)
+          bridger.seed_bridges()
+          gr_ids = '${{ github.event.inputs.gr_nodes }}'.split(',')
+          suits = SuitsPipeline(db=db)
+          pkg = suits.synthesize_adr_package(gr_ids)
+          ts = datetime.datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+          import pathlib
+          pathlib.Path('data/adr_packages').mkdir(parents=True, exist_ok=True)
+          with open(f'data/adr_packages/ADR_{ts}.json', 'w') as f:
+              json.dump(pkg, f, indent=2, default=str)
+          print(json.dumps(pkg['settlement_band'], indent=2))
+          db.close()
+          "
+        env:
+          NEXUS_DB_PATH: ${{ github.workspace }}/nexus_master.db
+
+      - name: Commit ADR package
+        run: |
+          git config user.name "NEXUS-Bot"
+          git config user.email "nexus-bot@noreply.github.com"
+          git add data/adr_packages/
+          git diff --staged --quiet || git commit -m "feat: ADR package generated $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push

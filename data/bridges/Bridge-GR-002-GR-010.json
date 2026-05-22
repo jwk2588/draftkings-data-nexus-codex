@@ -1,0 +1,26 @@
+{
+  "_artifact_type": "bridge",
+  "_nexus_version": "v2.0",
+  "id": 31,
+  "bridge_id": "Bridge-GR-002-GR-010",
+  "domain_a": "GR-002: Opaque Fulfillment / Audit Defect",
+  "domain_b": "GR-010: MGCB Material Change / Michigan Core",
+  "bridge_type": "Standard",
+  "strength": 0.647,
+  "status": "CANDIDATE",
+  "description": "Cross-domain bridge between Opaque Fulfillment / Audit Defect and MGCB Material Change / Michigan Core. Combined impact: 18.5/20. Domain overlap: 0.0%.",
+  "litigation_text": null,
+  "ev_links": [
+    "EV-295",
+    "EV-293",
+    "EV-292",
+    "EV-294"
+  ],
+  "gr_links": [
+    "GR-002",
+    "GR-010"
+  ],
+  "validated_by": [],
+  "created_at": "2026-05-19 10:12:30",
+  "updated_at": "2026-05-19 10:12:30"
+}

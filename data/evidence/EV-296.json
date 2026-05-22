@@ -1,0 +1,22 @@
+{
+  "_artifact_type": "evidence",
+  "_nexus_version": "v2.0",
+  "_classification": "Attorney Work Product",
+  "id": 5,
+  "ev_id": "EV-296",
+  "shortname": "PRIVACY_DATA_COLLECTION",
+  "ev_date": "2024-01-01",
+  "status": "CONFIRMED",
+  "source_file": "Privacy_ToS_Crosswalk.xlsx",
+  "confidence": "T1",
+  "gr_links": [
+    "GR-006",
+    "GR-012"
+  ],
+  "chain_prev": null,
+  "chain_next": null,
+  "notes": "Unlimited data collection clause; GDPR Art 5(1)(c) violation",
+  "sha256": "63bbe540d8d721f0",
+  "created_at": "2026-05-19 10:07:46",
+  "updated_at": "2026-05-22 03:13:31"
+}

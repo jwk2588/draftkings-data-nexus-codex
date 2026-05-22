@@ -1,0 +1,75 @@
+name: Evidence Ingestion
+on:
+  push:
+    paths:
+      - 'devtools/raw_text/**'
+  workflow_dispatch:
+    inputs:
+      ev_id:
+        description: 'Evidence ID to ingest (e.g. EV-300)'
+        required: true
+      source_file:
+        description: 'Source filename'
+        required: true
+
+jobs:
+  ingest-evidence:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.NEXUS_GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Ingest Evidence
+        run: |
+          python -c "
+          import sys, json
+          sys.path.insert(0, 'scripts')
+          from nexus_db import NexusDB
+          db = NexusDB()
+          db.init_schema()
+          db.upsert_evidence(
+              ev_id='${{ github.event.inputs.ev_id }}',
+              shortname='${{ github.event.inputs.source_file }}',
+              source_file='${{ github.event.inputs.source_file }}',
+              status='TENTATIVE',
+              confidence='T2',
+          )
+          print(f'Ingested: ${{ github.event.inputs.ev_id }}')
+          db.close()
+          "
+        env:
+          NEXUS_DB_PATH: ${{ github.workspace }}/nexus_master.db
+
+      - name: Export updated evidence
+        run: |
+          python -c "
+          import sys
+          sys.path.insert(0, 'scripts')
+          from nexus_db import NexusDB
+          from sync_cde import NexusSyncEngine
+          db = NexusDB()
+          engine = NexusSyncEngine(db=db, clone_dir='.')
+          engine._export_evidence()
+          db.close()
+          "
+        env:
+          NEXUS_DB_PATH: ${{ github.workspace }}/nexus_master.db
+
+      - name: Commit
+        run: |
+          git config user.name "NEXUS-Bot"
+          git config user.email "nexus-bot@noreply.github.com"
+          git add data/evidence/
+          git diff --staged --quiet || git commit -m "feat: ingest ${{ github.event.inputs.ev_id }}"
+          git push

@@ -1,0 +1,22 @@
+{
+  "_artifact_type": "evidence",
+  "_nexus_version": "v2.0",
+  "_classification": "Attorney Work Product",
+  "id": 4,
+  "ev_id": "EV-295",
+  "shortname": "OFF_BOOK_REMEDIATION",
+  "ev_date": "2024-09-01",
+  "status": "CONFIRMED",
+  "source_file": "DK_Onyx_Tracker_v6.xlsx",
+  "confidence": "T1",
+  "gr_links": [
+    "GR-008",
+    "GR-011"
+  ],
+  "chain_prev": null,
+  "chain_next": null,
+  "notes": "VIP host discretionary credits outside GL; no journal entry",
+  "sha256": "d2ccd8659f4c1ace",
+  "created_at": "2026-05-19 10:07:46",
+  "updated_at": "2026-05-22 03:13:31"
+}

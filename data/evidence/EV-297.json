@@ -1,0 +1,21 @@
+{
+  "_artifact_type": "evidence",
+  "_nexus_version": "v2.0",
+  "_classification": "Attorney Work Product",
+  "id": 6,
+  "ev_id": "EV-297",
+  "shortname": "TRACKING_PRE_CHECKED",
+  "ev_date": "2024-01-01",
+  "status": "CONFIRMED",
+  "source_file": "Privacy_ToS_Crosswalk.xlsx",
+  "confidence": "T1",
+  "gr_links": [
+    "GR-006"
+  ],
+  "chain_prev": null,
+  "chain_next": null,
+  "notes": "Pre-checked cookies/pixels; GDPR Art 7(4) violation",
+  "sha256": "384eadb07ed221c4",
+  "created_at": "2026-05-19 10:07:46",
+  "updated_at": "2026-05-22 03:13:31"
+}

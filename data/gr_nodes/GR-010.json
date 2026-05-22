@@ -1,0 +1,26 @@
+{
+  "_artifact_type": "gr_node",
+  "_nexus_version": "v2.0",
+  "_classification": "Attorney Work Product",
+  "id": 10,
+  "gr_id": "GR-010",
+  "name": "MGCB Material Change / Michigan Core",
+  "impact": 9.0,
+  "health": 0.79,
+  "status": "READY",
+  "agent_route": "TIGER+WOLF->SUITS",
+  "evidence_links": [
+    "EV-292",
+    "EV-293"
+  ],
+  "cascade_trigger": 0.3,
+  "cascade_targets": [],
+  "node_category": "Alpha",
+  "domain_tags": [
+    "Regulatory",
+    "MCPA"
+  ],
+  "notes": "Michigan Gaming Control Board material change filing",
+  "created_at": "2026-05-19 10:07:46",
+  "updated_at": "2026-05-22 03:13:31"
+}

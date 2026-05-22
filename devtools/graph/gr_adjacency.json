@@ -1,0 +1,137 @@
+{
+  "GR-001": {
+    "name": "GPS/Snappy VIE & Principal-Agent",
+    "impact": 9.8,
+    "health": 0.82,
+    "edges_cascade": [
+      "GR-002",
+      "GR-011"
+    ],
+    "edges_evidence": [
+      "EV-292",
+      "EV-293",
+      "EV-295"
+    ]
+  },
+  "GR-003": {
+    "name": "Binary Settlement / Threshold Structure",
+    "impact": 9.7,
+    "health": 0.85,
+    "edges_cascade": [
+      "GR-009"
+    ],
+    "edges_evidence": [
+      "EV-293"
+    ]
+  },
+  "GR-002": {
+    "name": "Opaque Fulfillment / Audit Defect",
+    "impact": 9.5,
+    "health": 0.8,
+    "edges_cascade": [
+      "GR-011"
+    ],
+    "edges_evidence": [
+      "EV-294",
+      "EV-295"
+    ]
+  },
+  "GR-011": {
+    "name": "BDO / SOX 404(b) Withdrawal Trigger",
+    "impact": 9.4,
+    "health": 0.84,
+    "edges_cascade": [
+      "GR-012"
+    ],
+    "edges_evidence": [
+      "EV-293",
+      "EV-294",
+      "EV-295"
+    ]
+  },
+  "GR-004": {
+    "name": "Apple Bundle / ARV Ambiguity",
+    "impact": 9.3,
+    "health": 0.87,
+    "edges_cascade": [
+      "GR-012"
+    ],
+    "edges_evidence": [
+      "EV-292",
+      "EV-294"
+    ]
+  },
+  "GR-009": {
+    "name": "Calendar Bleed / Period Contamination",
+    "impact": 9.3,
+    "health": 0.81,
+    "edges_cascade": [],
+    "edges_evidence": [
+      "EV-293"
+    ]
+  },
+  "GR-008": {
+    "name": "VIP Host Off-Book Remediation",
+    "impact": 9.1,
+    "health": 0.83,
+    "edges_cascade": [
+      "GR-011"
+    ],
+    "edges_evidence": [
+      "EV-295"
+    ]
+  },
+  "GR-010": {
+    "name": "MGCB Material Change / Michigan Core",
+    "impact": 9.0,
+    "health": 0.79,
+    "edges_cascade": [],
+    "edges_evidence": [
+      "EV-292",
+      "EV-293"
+    ]
+  },
+  "GR-012": {
+    "name": "Platform Guardian / Apple-Google Removal",
+    "impact": 8.9,
+    "health": 0.86,
+    "edges_cascade": [],
+    "edges_evidence": [
+      "EV-294",
+      "EV-296",
+      "EV-298",
+      "EV-299"
+    ]
+  },
+  "GR-005": {
+    "name": "No Monetary Value vs. Pathways",
+    "impact": 8.8,
+    "health": 0.75,
+    "edges_cascade": [],
+    "edges_evidence": [
+      "EV-292"
+    ]
+  },
+  "GR-006": {
+    "name": "Terms/Privacy Fragmentation",
+    "impact": 8.6,
+    "health": 0.78,
+    "edges_cascade": [
+      "GR-012"
+    ],
+    "edges_evidence": [
+      "EV-296",
+      "EV-297",
+      "EV-299"
+    ]
+  },
+  "GR-007": {
+    "name": "550:1 CAD / Currency Valuation",
+    "impact": 8.1,
+    "health": 0.7,
+    "edges_cascade": [],
+    "edges_evidence": [
+      "EV-292"
+    ]
+  }
+}

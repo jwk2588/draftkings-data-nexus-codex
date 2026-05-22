@@ -1,0 +1,22 @@
+{
+  "_artifact_type": "evidence",
+  "_nexus_version": "v2.0",
+  "_classification": "Attorney Work Product",
+  "id": 2,
+  "ev_id": "EV-293",
+  "shortname": "BREAKAGE_LEDGER",
+  "ev_date": "2024-03-01",
+  "status": "CONFIRMED",
+  "source_file": "DK_Onyx_Tracker_v6.xlsx",
+  "confidence": "T1",
+  "gr_links": [
+    "GR-003",
+    "GR-009"
+  ],
+  "chain_prev": null,
+  "chain_next": null,
+  "notes": "iPad Air 7th Gen: true ARV $749 vs disclosed $849 (-$100)",
+  "sha256": "f02cd3e99cd552a2",
+  "created_at": "2026-05-19 10:07:46",
+  "updated_at": "2026-05-22 03:13:31"
+}

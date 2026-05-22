@@ -1,0 +1,5 @@
+# NEXUS DraftKings Codex — Python Requirements
+# Core (no external ML deps required for base operation)
+# Optional ML deps for BRIDGER semantic scoring:
+# sentence-transformers>=2.2.0
+# torch>=2.0.0

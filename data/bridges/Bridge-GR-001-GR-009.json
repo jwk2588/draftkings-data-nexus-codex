@@ -1,0 +1,25 @@
+{
+  "_artifact_type": "bridge",
+  "_nexus_version": "v2.0",
+  "id": 10,
+  "bridge_id": "Bridge-GR-001-GR-009",
+  "domain_a": "GR-001: GPS/Snappy VIE & Principal-Agent",
+  "domain_b": "GR-009: Calendar Bleed / Period Contamination",
+  "bridge_type": "Standard",
+  "strength": 0.668,
+  "status": "LITIGATION-READY",
+  "description": "Cross-domain bridge between GPS/Snappy VIE & Principal-Agent and Calendar Bleed / Period Contamination. Combined impact: 19.1/20. Domain overlap: 0.0%.",
+  "litigation_text": null,
+  "ev_links": [
+    "EV-295",
+    "EV-293",
+    "EV-292"
+  ],
+  "gr_links": [
+    "GR-001",
+    "GR-009"
+  ],
+  "validated_by": [],
+  "created_at": "2026-05-19 10:12:30",
+  "updated_at": "2026-05-19 10:12:30"
+}

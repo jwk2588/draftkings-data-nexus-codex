@@ -1,0 +1,12 @@
+{
+  "_artifact_type": "system_state",
+  "_nexus_version": "v2.0",
+  "phase": 0,
+  "mode": "compact",
+  "version": "v2.0",
+  "moat_score": 0.6083,
+  "rule_pressure": 1.0,
+  "convergence_pct": 40.8,
+  "last_ev_id": "EV-299",
+  "last_gr_id": "GR-012"
+}

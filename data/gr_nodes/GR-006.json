@@ -1,0 +1,29 @@
+{
+  "_artifact_type": "gr_node",
+  "_nexus_version": "v2.0",
+  "_classification": "Attorney Work Product",
+  "id": 6,
+  "gr_id": "GR-006",
+  "name": "Terms/Privacy Fragmentation",
+  "impact": 8.6,
+  "health": 0.78,
+  "status": "READY",
+  "agent_route": "WOLF+TIGER->SUITS",
+  "evidence_links": [
+    "EV-296",
+    "EV-297",
+    "EV-299"
+  ],
+  "cascade_trigger": 0.3,
+  "cascade_targets": [
+    "GR-012"
+  ],
+  "node_category": "Beta",
+  "domain_tags": [
+    "Contract",
+    "Privacy"
+  ],
+  "notes": "Stale ToS; vendor disclosure gaps; GDPR Art 5 violation",
+  "created_at": "2026-05-19 10:07:46",
+  "updated_at": "2026-05-22 03:13:31"
+}

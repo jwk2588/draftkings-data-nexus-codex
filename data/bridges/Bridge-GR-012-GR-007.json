@@ -1,0 +1,27 @@
+{
+  "_artifact_type": "bridge",
+  "_nexus_version": "v2.0",
+  "id": 68,
+  "bridge_id": "Bridge-GR-012-GR-007",
+  "domain_a": "GR-012: Platform Guardian / Apple-Google Removal",
+  "domain_b": "GR-007: 550:1 CAD / Currency Valuation",
+  "bridge_type": "Standard",
+  "strength": 0.595,
+  "status": "CANDIDATE",
+  "description": "Cross-domain bridge between Platform Guardian / Apple-Google Removal and 550:1 CAD / Currency Valuation. Combined impact: 17.0/20. Domain overlap: 0.0%.",
+  "litigation_text": null,
+  "ev_links": [
+    "EV-292",
+    "EV-296",
+    "EV-298",
+    "EV-299",
+    "EV-294"
+  ],
+  "gr_links": [
+    "GR-012",
+    "GR-007"
+  ],
+  "validated_by": [],
+  "created_at": "2026-05-19 10:12:30",
+  "updated_at": "2026-05-19 10:12:30"
+}

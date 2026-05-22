@@ -1,0 +1,26 @@
+{
+  "_artifact_type": "bridge",
+  "_nexus_version": "v2.0",
+  "id": 25,
+  "bridge_id": "Bridge-GR-003-GR-006",
+  "domain_a": "GR-003: Binary Settlement / Threshold Structure",
+  "domain_b": "GR-006: Terms/Privacy Fragmentation",
+  "bridge_type": "Standard",
+  "strength": 0.64,
+  "status": "CANDIDATE",
+  "description": "Cross-domain bridge between Binary Settlement / Threshold Structure and Terms/Privacy Fragmentation. Combined impact: 18.3/20. Domain overlap: 0.0%.",
+  "litigation_text": null,
+  "ev_links": [
+    "EV-293",
+    "EV-299",
+    "EV-296",
+    "EV-297"
+  ],
+  "gr_links": [
+    "GR-003",
+    "GR-006"
+  ],
+  "validated_by": [],
+  "created_at": "2026-05-19 10:12:30",
+  "updated_at": "2026-05-19 10:12:30"
+}

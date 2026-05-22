@@ -1,0 +1,23 @@
+{
+  "_artifact_type": "evidence",
+  "_nexus_version": "v2.0",
+  "_classification": "Attorney Work Product",
+  "id": 1,
+  "ev_id": "EV-292",
+  "shortname": "DARC_CATALOG",
+  "ev_date": "2024-01-15",
+  "status": "CONFIRMED",
+  "source_file": "DK_Onyx_Tracker_v6.xlsx",
+  "confidence": "T1",
+  "gr_links": [
+    "GR-001",
+    "GR-004",
+    "GR-007"
+  ],
+  "chain_prev": null,
+  "chain_next": null,
+  "notes": "162 rows; crown costs, MSRP, margin calculations; Apple bundle",
+  "sha256": "f6919e64fe893f0d",
+  "created_at": "2026-05-19 10:07:46",
+  "updated_at": "2026-05-22 03:13:31"
+}
