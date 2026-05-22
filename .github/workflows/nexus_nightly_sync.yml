@@ -1,17 +1,21 @@
 name: NEXUS Nightly Sync
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 2 * * *'   # 2am UTC daily
+  workflow_dispatch:
   workflow_dispatch:
     inputs:
       scenario:
         description: 'Scenario to run (PLATFORM_REMOVAL_PINCER, FULL_SPECTRUM, etc.)'
+  workflow_dispatch:
         required: false
         default: 'FULL_SPECTRUM'
 
 jobs:
   nexus-sync:
     runs-on: ubuntu-latest
+  workflow_dispatch:
     permissions:
       contents: write
     steps:
@@ -23,6 +27,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+  workflow_dispatch:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
