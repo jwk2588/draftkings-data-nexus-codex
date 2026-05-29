@@ -40,7 +40,7 @@ jobs:
       - name: Run FETTY FM Scenario
         run: |
           python -c "
-          import sys, json
+          import sys, json, os
           sys.path.insert(0, 'scripts')
           from nexus_db import NexusDB
           from fetty_fm import FettyFM
@@ -50,17 +50,19 @@ jobs:
           bridger.seed_bridges()
           bridger.full_bridge_scan()
           fm = FettyFM(db=db)
-          report = fm.run_scenario('${{ github.event.inputs.scenario || "FULL_SPECTRUM" }}')
+          scenario = os.environ.get('NEXUS_SCENARIO', 'FULL_SPECTRUM')
+          report = fm.run_scenario(scenario)
           print(json.dumps(report, indent=2, default=str))
           db.close()
           "
         env:
           NEXUS_DB_PATH: ${{ github.workspace }}/nexus_master.db
+          NEXUS_SCENARIO: ${{ github.event.inputs.scenario || 'FULL_SPECTRUM' }}
 
       - name: Export Artifacts
         run: |
           python -c "
-          import sys
+          import sys, os
           sys.path.insert(0, 'scripts')
           from nexus_db import NexusDB
           from sync_cde import NexusSyncEngine
